@@ -1,0 +1,139 @@
+<section class="content">
+    <div class="container-fluid">
+      <!-- Small boxes (Stat box) -->
+      <div class="row mt-2">
+        <div class="col-md-3">
+          <!-- small box -->
+          <div class="small-box bg-info">
+            <div class="inner">
+            <h3 id="fullWalkingDistance"></h3>
+
+              <p>Full walking distance</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-navigate"></i>
+            </div>
+            <!-- <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
+          </div>
+        </div>
+        <div class="col-md-3">
+          <!-- small box -->
+          <div class="small-box bg-info">
+            <div class="inner">
+            <h3 id="walkingDistance"></h3>
+
+              <p>Last 24h walking distance</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-navigate"></i>
+            </div>
+            <!-- <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-md-2">
+          <!-- small box -->
+          <div class="small-box bg-success">
+            <div class="inner">
+                <h3 id="tasksCount"></h3>
+
+              <p>Tasks</p>
+            </div>
+            <div class="icon">
+              <i class="nav-icon fas fa-tasks"></i>
+            </div>
+            <!-- <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-md-2">
+          <!-- small box -->
+          <div class="small-box bg-warning">
+            <div class="inner">
+              <h3 id="usersCount"></h3>
+
+              <p>Users</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+            <!-- <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> -->
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-md-2">
+          <!-- small box -->
+          <div class="small-box bg-danger">
+            <div class="inner">
+              <h3 id="partnershipCount"></h3>
+              <p>Partnerships</p>
+            </div>
+            <div class="icon">
+              <i class="nav-icon fas fa-handshake"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Users</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table class="table table-bordered">
+                <thead>
+                  <tr id="usersTable"> 
+                    <th style="width: 10px">#</th>
+                    <th style="cursor: pointer;" onclick="sort('firstname')">Firstname</th>
+                    <th>Twitter Username</th>
+                    <th style="cursor: pointer;" onclick="sort('email')">Email</th>
+                    <th style="cursor: pointer;" onclick="sort('level')">Level</th>
+                    <th style="cursor: pointer;" onclick="sort('xp')">XP</th>
+                    <th style="cursor: pointer;" onclick="sort('points')">Points</th>
+                    <th style="cursor: pointer;" onclick="sort('steps')">Steps</th>
+                    <th style="cursor: pointer;" onclick="sort('distance')">Distance</th>
+                    <th >Walkers</th>
+                    <th >Swapable Points</th>
+                  </tr>
+                </thead>
+                <tbody id="tableUsers">
+                 
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          <!-- <div class="card-footer clearfix">
+              <ul class="pagination pagination-sm m-0 float-right">
+                <li class="page-item"><a  class="page-link" onclick="getUsersLeft()" href="#">&laquo;</a></li>
+                <li class="page-item"><a class="page-link" onclick="getUsersPaging('0')"href="#">1</a></li>
+                <li class="page-item"><a class="page-link" onclick="getUsersPaging('1')" href="#">2</a></li>
+                <li class="page-item"><a  class="page-link" onclick="getUsersPaging('2')"href="#">3</a></li>
+                <li class="page-item"><a  class="page-link" onclick="getUsersPaging('3')" href="#">4</a></li>
+                <li class="page-item"><a  class="page-link" onclick="getUsersPaging('4')" href="#">5</a></li>
+                <li class="page-item"><a  class="page-link" onclick="getUsersPaging('5')" href="#">6</a></li>
+                <li class="page-item"><a  class="page-link" onclick="getUsersPaging('6')" href="#">7</a></li>
+                <li class="page-item"><a  class="page-link" onclick="getUsersPaging('7')" href="#">8</a></li>
+                <li class="page-item"><a  class="page-link" onclick="getUsersPaging('8')" href="#">9</a></li>
+                <li class="page-item"><a  class="page-link" onclick="getUsersPaging('9')" href="#">10</a></li>
+                <li class="page-item"><a class="page-link"onclick="getUsersRight()" href="#">&raquo;</a></li>
+              </ul>
+            </div> -->
+          </div>
+          <!-- /.card -->
+
+         
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+       
+        <!-- /.col -->
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>

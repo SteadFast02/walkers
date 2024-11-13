@@ -1,0 +1,115 @@
+<style>
+    /* Container for the slider */
+    .slider-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Slider */
+    .slider {
+        position: relative;
+        width: 50px;
+        height: 24px;
+        background-color: #ccc;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    /* Circle inside the slider */
+    .slider-circle {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.3s;
+    }
+
+    /* Active (On) state */
+    .slider.on {
+        background-color: #4caf50;
+    }
+
+    .slider.on .slider-circle {
+        transform: translateX(26px);
+    }
+</style>
+
+<section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>LeaderBoard</h1>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card card-primary">
+              <div>
+                  <select class="form-control" id="taskType">
+                      <option value="Daily Task">Daily Task</option>
+                      <option value="Weekly Task">Weekly Task</option>
+                      <option value="Monthly Task">Monthly Task</option>
+                  </select>
+              </div>
+          </div>
+
+        </div>
+        <div class="slider-container">
+              <div id="slider" class="slider" onclick="leaderBoardToggleSlider()">
+                  <div class="slider-circle"></div>
+              </div>
+              <span id="sliderStatus">Private</span>
+        </div>
+    <div class="col-md-12">
+      <div class="card">
+
+        <div class="card-body">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Show Leaderboard</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboardContent">
+              
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div> 
+    </div>
+  </section>
+
+
+  <div class="modal fade" id="modal-default-partnerships">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Remove Partnership</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="partnershipModalBody">
+         
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" onclick="removePartnership()">Remove</button>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>

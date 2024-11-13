@@ -1,0 +1,109 @@
+<style>
+    .slider-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .slider {
+        position: relative;
+        width: 50px;
+        height: 24px;
+        background-color: #ccc;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .slider-circle {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.3s;
+    }
+    .slider.on {
+        background-color: #4caf50;
+    }
+
+    .slider.on .slider-circle {
+        transform: translateX(26px);
+    }
+</style>
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-7">
+                <h1>Referal</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Users</th>
+                                    <th>Email</th>
+                                    <th>Total Referal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="referalContent">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.col -->
+            <div class="col-md-4">
+                <!-- general form elements -->
+                <div class="card card-primary">
+                    <form>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Referal</label>
+                                <input type="text" placeholder="Enter amount to refer" class="form-control" id="referal">
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer">
+                            <button type="button" onclick="confirmReferal()" class="btn btn-primary">Confirm</button>
+                        </div>
+                    </form>
+                    
+                    <div class="slider-container card-body">
+                        <div id="slider" class="slider" onclick="referalToggleSlider()">
+                            <div class="slider-circle"></div>
+                        </div>
+                        <span id="sliderStatus">Disable</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+<!-- Daterangepicker CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Moment.js -->
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+<!-- Daterangepicker JS -->
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script>
+    
+</script>

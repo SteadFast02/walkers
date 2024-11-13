@@ -1,0 +1,158 @@
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-7">
+                <h1>Advertisement</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Image</th>
+                                    <th>View</th>
+                                    <th>Enable/Disable</th>
+                                    <th>Remove Adv</th>
+                                </tr>
+                            </thead>
+                            <tbody id="advContent">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.col -->
+            <div class="col-md-4">
+                <!-- general form elements -->
+                <div class="card card-primary">
+                    <form>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Name</label>
+                                <input type="text" class="form-control" id="advName">
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>Image </label>
+                                <input type="file" id="advImageUpload">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Date and time range</label>
+                            
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="far fa-clock"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control float-right" id="advreservationtime">
+                                </div>
+                                <!-- /.input group -->
+                            </div>
+
+                        </div>
+                        <!-- /.card-body -->
+
+                        <div class="card-footer">
+                            <button type="button" onclick="addAdv()" class="btn btn-primary">Add</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+</section>
+
+
+<!-- Update Advertisement -->
+<div class="modal fade" id="modal-default-Updateadv">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update Advertisement</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" class="form-control" id="advUpdateName">
+                </div>
+                <div class="form-group">
+                    <label>Image</label>
+                    <input type="file" id="advUpdatedImageUpload">
+                    <img id="advImagePreview" style="width: 100px; margin-top: 10px; display: none;">
+                </div>
+                <div class="form-group">
+                    <label>Date and time range</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="far fa-clock"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="reservationtimeupdate">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="updateAdvButton" class="btn btn-primary" data-dismiss="modal" aria-label="Close" >Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="modal-default-advremove">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Remove Advertisement</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="advRemoveModalBody">
+
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" onclick="removeAdv()">Remove</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- Daterangepicker CSS -->
+
+<!-- jQuery (only include once) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Popper.js for Bootstrap tooltips and popovers -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+<!-- Bootstrap 4 JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Daterangepicker CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+
+<!-- Moment.js (needed for Daterangepicker) -->
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+<!-- Daterangepicker JS -->
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
