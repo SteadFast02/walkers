@@ -1,4 +1,5 @@
 jQuery(function () {
+  checkLogin();
   loadPage("analytics");
 });
 let PARTNERSHIP_IMAGE = null;
@@ -35,7 +36,17 @@ function loadPage(page) {
   }
 }
 
+function checkLogin() {
+  const token = localStorage.getItem("t");
+  if (!token) {
+    // If no token is found, redirect to the login page
+    window.location.href = "https://walkers-alpha.vercel.app/login.html"; // Modify the path as needed
+    return;
+  }
+}
+
 function loadAlertsPage(p) {
+  checkLogin();
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
@@ -44,6 +55,7 @@ function loadAlertsPage(p) {
 }
 
 function loadGenerateTestUsersPage(p) {
+  checkLogin();
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
@@ -52,6 +64,7 @@ function loadGenerateTestUsersPage(p) {
 }
 
 function loadReviewTasks(p) {
+  checkLogin();
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
@@ -78,6 +91,7 @@ function getTestUsers() {
 }
 
 function loadSwapInfoPage(p) {
+  checkLogin();
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
@@ -232,6 +246,7 @@ function rejectTask(taskStatusId) {
 }
 
 function loadIRLPage(p) {
+  checkLogin();
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
@@ -252,6 +267,7 @@ function loadIRLPage(p) {
 }
 
 function loadAnalyticsPage(p) {
+  checkLogin();
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
@@ -328,6 +344,7 @@ function getStats() {
 }
 
 function loadTaskPage(p) {
+  checkLogin();
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
@@ -348,6 +365,7 @@ function loadTaskPage(p) {
 }
 
 function loadAdvPage(p) {
+  checkLogin();
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
@@ -380,6 +398,7 @@ function loadAdvPage(p) {
 }
 
 function loadReferalPage(p) {
+  checkLogin();
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
@@ -388,6 +407,7 @@ function loadReferalPage(p) {
 }
 
 function loadLeaderboardPage(p) {
+  checkLogin();
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
