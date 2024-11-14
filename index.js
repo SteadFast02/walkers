@@ -403,6 +403,7 @@ function loadReferalPage(p) {
     .empty()
     .load(p + ".html", function () {
       getReferal();
+      checkReferralBoostStatus();
     });
 }
 
@@ -479,7 +480,11 @@ function getAdv() {
 function addAdv() {
   let fromTo = $("#advreservationtime").val();
   fromTo = fromTo.split("-");
-
+  const advName = $("#advName").val().trim();
+  if (advName === "") {
+    alert("Please enter a name for the advertisement.");
+    return;
+  }
   const dateStringFrom = fromTo[0].trim();
   const [dateFrom, timeFrom] = dateStringFrom.split(" ");
   const [dayFrom, monthFrom, yearFrom] = dateFrom.split("/");
@@ -501,7 +506,7 @@ function addAdv() {
     image: ADV_IMAGE,
     linkUrl: ADV_IMAGE,
 
-    name: $("#advName").val(),
+    name: advName,
     startDate: dateFromObj.getTime(),
     endDate: dateToObj.getTime(),
   };
@@ -521,12 +526,29 @@ function addAdv() {
   })
     .then((response) => response.json())
     .then((data) => {
+      alert("Advertisement Created Successfully");
       getAdv(data);
     })
     .catch((error) => console.error(error));
 }
 
 function addTask() {
+  const taskName = $("#taskName").val().trim();
+  if (taskName === "") {
+    alert("Please enter a name for the task.");
+    return;
+  }
+
+  const reward = $("#taskReward").val().trim();
+  if (
+    !reward ||
+    isNaN(reward) ||
+    Number(reward) <= 0 ||
+    parseInt(reward) !== Number(reward)
+  ) {
+    alert("Please enter a valid positive integer for the reward (XP).");
+    return;
+  }
   let fromTo = $("#reservationtime").val();
   fromTo = fromTo.split("-");
 
@@ -548,20 +570,26 @@ function addTask() {
   const [hourTo, minuteTo] = timeTo.split(":");
   const dateToObj = new Date(yearTo, monthTo - 1, dayTo, hourTo, minuteTo);
 
+  const twitterTaskSelected =
+    $("#forTwitterUserSlct :selected").val() === "yes";
+  const twitterPostLink =
+    twitterTaskSelected && $("#twitterUsername").val()
+      ? $("#twitterUsername").val()
+      : "NA";
+  console.log(twitterPostLink);
+
   const data = {
     image: TASK_IMAGE,
-    name: $("#taskName").val(),
+    name: taskName,
     description: $("#taskDescription").val(),
-    reward: $("#taskReward").val(),
+    reward: reward,
     startDate: dateFromObj.getTime(),
     endDate: dateToObj.getTime(),
     testUserTask: $("#forTestUserSlct :selected").val() === "yes",
-    twitterTask: $("#forTwitterUserSlct :selected").val() === "yes",
+    twitterTask: twitterTaskSelected,
+    twitterPostLink: twitterPostLink,
   };
 
-  if (data.twitterTask) {
-    data.twitterPostLink = $("#twitterUsername").val();
-  }
   // fetch(REQUEST.ip + "/api/v1/admin/tasks", {
   fetch("https://javaapi.abhiwandemos.com/api/v1/admin/tasks", {
     method: "POST",
@@ -573,6 +601,7 @@ function addTask() {
   })
     .then((response) => response.json())
     .then((data) => {
+      alert("Task Added Successfully");
       getTasks();
     })
     .catch((error) => console.error(error));
@@ -580,6 +609,7 @@ function addTask() {
 
 function handleTwitterUserSelection() {
   const twitterUserSelect = document.getElementById("forTwitterUserSlct").value;
+  console.log("1", twitterUserSelect);
   const inputContainer = document.getElementById("twitterUserInputContainer");
 
   if (twitterUserSelect === "yes") {
@@ -588,6 +618,7 @@ function handleTwitterUserSelection() {
       inputBox.type = "text";
       inputBox.className = "form-control mt-2";
       inputBox.id = "twitterUsername";
+      inputBox.value = "";
       inputBox.placeholder = "Enter Twitter Username";
       inputContainer.appendChild(inputBox);
     }
@@ -879,9 +910,9 @@ function appendTasks(t) {
       " </td><td style='vertical-align: middle;'>" +
       isForTestUser +
       " </td><td style='vertical-align: middle;'>" +
-      moment(t.startDate).format("DD/MM/yyyy HH:mm") +
+      moment(t.startDate).format("DD/MM/YYYY HH:mm") +
       " </td><td style='vertical-align: middle;'>" +
-      moment(t.endDate).format("DD/MM/yyyy HH:mm") +
+      moment(t.endDate).format("DD/MM/YYYY HH:mm") +
       " </td><td style='text-align: center;'>" +
       img +
       "</td><td style='text-align:center'>  <button type='button' onclick='openModalRemoveTask(\"" +
@@ -1402,6 +1433,13 @@ function confirmReferal() {
     alert("Please enter a valid amount to refer.");
     return;
   }
+  if (
+    referralAmount.includes(".") ||
+    parseInt(referralAmount) !== Number(referralAmount)
+  ) {
+    alert("Please enter a valid positive integer without decimals.");
+    return;
+  }
   fetch(
     `https://javaapi.abhiwandemos.com/api/v1/admin/referral-config?referralValue=${Number(
       referralAmount
@@ -1416,6 +1454,7 @@ function confirmReferal() {
   )
     .then((response) => {
       if (response.ok) {
+        alert("Referral Confirmed");
         return response.json();
       } else {
         throw new Error(
@@ -1435,9 +1474,6 @@ function confirmReferal() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  checkReferralBoostStatus();
-});
 var isReferralBoostEnabled = false;
 
 function checkReferralBoostStatus() {
@@ -1454,7 +1490,7 @@ function checkReferralBoostStatus() {
   )
     .then((response) => response.json())
     .then((data) => {
-      if (data.status) {
+      if (data) {
         slider.classList.add("on");
         sliderStatus.textContent = "Enable";
         isReferralBoostEnabled = true;
@@ -1487,6 +1523,7 @@ function referalToggleSlider() {
     .then((response) => {
       if (response.ok) {
         isReferralBoostEnabled = !isReferralBoostEnabled;
+        isReferralBoostEnabled ? alert("Enabled") : alert("Disabled");
         slider.classList.toggle("on", isReferralBoostEnabled);
         sliderStatus.textContent = isReferralBoostEnabled
           ? "Enable"
