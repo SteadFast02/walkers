@@ -422,13 +422,11 @@ function getReferal() {
   })
     .then((response) => {
       if (!response.ok) {
-        console.log("API request failed");
         throw new Error("API request failed");
       }
       return response.json();
     })
     .then((data) => {
-      console.log("Referral data---", data);
       $("#referalContent").empty();
       if (isValidObject(data)) {
         for (let i = 0; i < data.length; i++) {
@@ -474,14 +472,11 @@ function addAdv() {
     minuteFrom
   );
 
-  console.log("1---", dateStringFrom);
-  console.log("2--From-", dateFromObj.getTime());
   const dateStringTo = fromTo[1].trim();
   const [dateTo, timeTo] = dateStringTo.split(" ");
   const [dayTo, monthTo, yearTo] = dateTo.split("/");
   const [hourTo, minuteTo] = timeTo.split(":");
   const dateToObj = new Date(yearTo, monthTo - 1, dayTo, hourTo, minuteTo);
-  console.log("3---To-", dateToObj.getTime());
   const data = {
     image: ADV_IMAGE,
     linkUrl: ADV_IMAGE,
@@ -490,7 +485,6 @@ function addAdv() {
     startDate: dateFromObj.getTime(),
     endDate: dateToObj.getTime(),
   };
-  console.log("iamsun adv post data", data);
   data.testUserAdv = false;
   if ($("#forTestUserSlct :selected").val() == "yes") {
     data.testUserAdv = true;
@@ -763,7 +757,6 @@ function removeAlert() {
 }
 
 function appendAdvs(a) {
-  console.log("Ad information:", a);
   var isForTestUser = a.testUserAdv ? "Yes" : "No";
   var img = a.linkUrl
     ? "<img style='width:100px' src='" + a.linkUrl + "'/>"
@@ -823,12 +816,10 @@ function toggleButtonState(a) {
     }
   )
     .then(() => {
-      console.log("API call successful, state updated.");
       a.active = newState;
       loadAdvPage("advertisment");
     })
     .catch((error) => {
-      console.log("API call failed, reverting state.", error);
       button.style.backgroundColor = a.active ? "red" : "green";
       button.innerText = a.active ? "Disable" : "Enable";
     });
@@ -882,7 +873,6 @@ function appendTasks(t) {
 }
 
 function appendReferals(t) {
-  console.log(t);
   $("#referalContent").append(
     "<tr><td style='vertical-align: middle;'>" +
       t.userResponse.firstname +
@@ -1340,8 +1330,6 @@ function updateLeaderboard() {
   const isVisible =
     document.getElementById("sliderStatus").innerText === "Public";
 
-  console.log("Task Type:", taskType);
-  console.log("Is Visible:", isVisible);
   fetch(
     `https://javaapi.abhiwandemos.com/api/v1/admin/tasks/leaderboard?taskName=${taskType}&isVisible=${isVisible}`,
     {
@@ -1360,7 +1348,6 @@ function updateLeaderboard() {
       }
     })
     .then((data) => {
-      console.log("Data", data);
       $("#leaderboardContent").empty();
       if (isValidObject(data)) {
         for (var i = 0; i < data.length; i++) {
@@ -1417,7 +1404,6 @@ function confirmReferal() {
       }
     })
     .then((responseData) => {
-      console.log("Referral confirmed:", responseData);
       alert("Referral amount confirmed successfully!");
       document.getElementById("referal").value = "";
     })
@@ -1482,11 +1468,9 @@ function referalToggleSlider() {
       if (response.ok) {
         isReferralBoostEnabled = !isReferralBoostEnabled;
         slider.classList.toggle("on", isReferralBoostEnabled);
-        console.log("2===", isReferralBoostEnabled);
         sliderStatus.textContent = isReferralBoostEnabled
           ? "Enable"
           : "Disable";
-        console.log("Referral XP boost state toggled successfully");
       } else {
         throw new Error("Failed to toggle referral XP boost");
       }
