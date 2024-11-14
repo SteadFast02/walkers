@@ -118,7 +118,9 @@
   })
   .then(data => {
     localStorage.setItem("t", data.accessToken);
-    window.open(REQUEST.mainPage, "_self");
+    // window.open(REQUEST.mainPage, "_self");
+    window.open("https://walkers-alpha.vercel.app/", "_self");
+
 
   })
   .catch(error => {
