@@ -1,7 +1,7 @@
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-7">
+            <div class="col-12">
                 <h1>Advertisement</h1>
             </div>
         </div>
@@ -12,62 +12,60 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-12 col-lg-8">
                 <div class="card">
                     <div class="card-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
-                                    <th>Image</th>
-                                    <th>View</th>
-                                    <th>Enable/Disable</th>
-                                    <th>Remove Adv</th>
-                                </tr>
-                            </thead>
-                            <tbody id="advContent">
-
-                            </tbody>
-                        </table>
+                        <!-- Make table responsive -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Image</th>
+                                        <th>View</th>
+                                        <th>Enable/Disable</th>
+                                        <th>Remove Adv</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="advContent">
+                                    <!-- Dynamic content will go here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- /.col -->
-            <div class="col-md-4">
-                <!-- general form elements -->
+            
+            <!-- Add advertisement form -->
+            <div class="col-12 col-lg-4">
                 <div class="card card-primary">
                     <form>
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="exampleInputEmail1">Name</label>
+                                <label for="advName">Name</label>
                                 <input type="text" class="form-control" id="advName">
                             </div>
 
-
                             <div class="form-group">
                                 <label>Image </label>
-                                <input type="file" id="advImageUpload">
+                                <input type="file" id="advImageUpload" class="form-control-file">
                             </div>
 
                             <div class="form-group">
                                 <label>Date and time range</label>
-                            
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="far fa-clock"></i></span>
                                     </div>
-                                    <input type="text" class="form-control float-right" id="advreservationtime">
+                                    <input type="text" class="form-control" id="advreservationtime">
                                 </div>
-                                <!-- /.input group -->
                             </div>
-
                         </div>
-                        <!-- /.card-body -->
 
                         <div class="card-footer">
-                            <button type="button" onclick="addAdv()" class="btn btn-primary">Add</button>
+                            <button type="button" onclick="addAdv()" class="btn btn-primary btn-block">Add</button>
                         </div>
                     </form>
                 </div>
@@ -75,10 +73,9 @@
         </div>
 </section>
 
-
-<!-- Update Advertisement -->
+<!-- Update Advertisement Modal -->
 <div class="modal fade" id="modal-default-Updateadv">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Update Advertisement</h4>
@@ -93,7 +90,7 @@
                 </div>
                 <div class="form-group">
                     <label>Image</label>
-                    <input type="file" id="advUpdatedImageUpload">
+                    <input type="file" id="advUpdatedImageUpload" class="form-control-file">
                     <img id="advImagePreview" style="width: 100px; margin-top: 10px; display: none;">
                 </div>
                 <div class="form-group">
@@ -107,16 +104,15 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="updateAdvButton" class="btn btn-primary" data-dismiss="modal" aria-label="Close" >Update</button>
+                <button type="button" id="updateAdvButton" class="btn btn-primary btn-block" data-dismiss="modal">Update</button>
             </div>
         </div>
     </div>
 </div>
 
-
-
+<!-- Remove Advertisement Modal -->
 <div class="modal fade" id="modal-default-advremove">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Remove Advertisement</h4>
@@ -125,34 +121,33 @@
                 </button>
             </div>
             <div class="modal-body" id="advRemoveModalBody">
-
+                <!-- Content will be populated dynamically -->
             </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close" onclick="removeAdv()">Remove</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="removeAdv()">Remove</button>
             </div>
         </div>
-        <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
 </div>
 
-<!-- Daterangepicker CSS -->
-
-<!-- jQuery (only include once) -->
+<!-- Scripts for dependencies -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Popper.js for Bootstrap tooltips and popovers -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-
-<!-- Bootstrap 4 JS -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<!-- Daterangepicker CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
-
-<!-- Moment.js (needed for Daterangepicker) -->
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-
-<!-- Daterangepicker JS -->
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<style>
+    /* Adjust table cell font size and padding for smaller screens */
+    @media (max-width: 768px) {
+        .table th, .table td {
+            font-size: 0.9rem;
+            padding: 0.5rem;
+        }
+        h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>

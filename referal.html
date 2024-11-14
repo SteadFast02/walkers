@@ -1,4 +1,5 @@
 <style>
+    /* Slider styles */
     .slider-container {
         display: flex;
         align-items: center;
@@ -30,13 +31,58 @@
     .slider.on .slider-circle {
         transform: translateX(26px);
     }
+
+    /* Table and Form responsiveness */
+    @media (max-width: 768px) {
+        /* Table responsiveness */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table th, .table td {
+            font-size: 0.9rem;
+            padding: 0.5rem;
+        }
+
+        /* Card adjustment */
+        .card-body {
+            padding: 1rem;
+        }
+
+        /* Form layout adjustment */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        /* Adjust slider */
+        .slider-container {
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Adjust input field size */
+        .form-control {
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Extra small screens */
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 1.2rem;
+        }
+
+        .card {
+            margin-bottom: 1rem;
+        }
+    }
 </style>
 
 <section class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
-            <div class="col-sm-7">
-                <h1>Referal</h1>
+            <div class="col-12 col-sm-7">
+                <h1>Referral</h1>
             </div>
         </div>
     </div>
@@ -46,38 +92,40 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-12 col-md-8">
                 <div class="card">
                     <div class="card-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Users</th>
-                                    <th>Email</th>
-                                    <th>Total Referal</th>
-                                </tr>
-                            </thead>
-                            <tbody id="referalContent">
-
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Users</th>
+                                        <th>Email</th>
+                                        <th>Total Referral</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="referalContent">
+                                    <!-- Dynamic content will go here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
             <!-- /.col -->
-            <div class="col-md-4">
+            <div class="col-12 col-md-4">
                 <!-- general form elements -->
                 <div class="card card-primary">
                     <form>
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="exampleInputEmail1">Referal</label>
+                                <label for="exampleInputEmail1">Referral</label>
                                 <input type="text" placeholder="Enter amount to refer" class="form-control" id="referal">
                             </div>
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer">
-                            <button type="button" onclick="confirmReferal()" class="btn btn-primary">Confirm</button>
+                            <button type="button" onclick="confirmReferal()" class="btn btn-primary btn-block">Confirm</button>
                         </div>
                     </form>
                     
@@ -104,6 +152,3 @@
 <!-- Daterangepicker JS -->
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
-<script>
-    
-</script>
