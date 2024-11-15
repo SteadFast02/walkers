@@ -1542,6 +1542,7 @@ function confirmReferal() {
     .then((responseData) => {
       alert("Referral amount confirmed successfully!");
       document.getElementById("referal").value = "";
+      getReferralAmount();
     })
     .catch((error) => {
       console.error("Error confirming referral:", error);
@@ -1549,7 +1550,6 @@ function confirmReferal() {
         `There was an error confirming the referral: ${error.message}. Please try again.`
       );
     });
-  getReferralAmount();
 }
 
 var isReferralBoostEnabled = false;
