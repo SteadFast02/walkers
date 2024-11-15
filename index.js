@@ -449,7 +449,6 @@ function getReferal() {
       return response.json();
     })
     .then((data) => {
-      console.log(data);
       $("#referalContent").empty();
       if (isValidObject(data)) {
         for (let i = 0; i < data.length; i++) {
@@ -473,7 +472,6 @@ function getReferralAmount() {
       return response.json();
     })
     .then((data) => {
-      console.log("Referral", data);
 
       // Assuming data contains a property `lastReferralAmount` to display
       const referralAmount = data || "No data available";
@@ -602,7 +600,6 @@ function addTask() {
     twitterTaskSelected && $("#twitterUsername").val()
       ? $("#twitterUsername").val()
       : "NA";
-  console.log(twitterPostLink);
 
   const data = {
     image: TASK_IMAGE,
@@ -635,7 +632,6 @@ function addTask() {
 
 function handleTwitterUserSelection() {
   const twitterUserSelect = document.getElementById("forTwitterUserSlct").value;
-  console.log("1", twitterUserSelect);
   const inputContainer = document.getElementById("twitterUserInputContainer");
 
   if (twitterUserSelect === "yes") {
@@ -1483,7 +1479,6 @@ function confirmReferal() {
   )
     .then((response) => {
       if (response.ok) {
-        alert("Referral Confirmed");
         return response.json();
       } else {
         throw new Error(
