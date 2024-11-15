@@ -663,7 +663,7 @@ function handleTwitterUserSelection() {
   if (twitterUserSelect === "yes") {
     if (!document.getElementById("twitterUsername")) {
       const inputBox = document.createElement("input");
-      inputBox.type = "text";
+      inputBox.type = "url";
       inputBox.className = "form-control mt-2";
       inputBox.id = "twitterUsername";
       inputBox.value = "";
@@ -943,6 +943,12 @@ function appendTasks(t) {
     isForTwitterUser = "No";
   }
 
+  if (t.twitterPostLink) {
+    twitterPostLink = t.twitterPostLink;
+  } else {
+    twitterPostLink = "NA";
+  }
+
   var img = "";
   if (isValidObject(t.image)) {
     img = "<img style='width:50px' src='" + t.image + "'/>";
@@ -954,8 +960,8 @@ function appendTasks(t) {
       t.description +
       " </td><td style='vertical-align: middle;'>" +
       t.reward +
-      " </td><td style='vertical-align: middle;'>" +
-      t.twitterPostLink +
+      " </td><td style='vertical-align: middle;text-align: center;'>" +
+      twitterPostLink +
       " </td><td style='vertical-align: middle;'>" +
       isForTwitterUser +
       " </td><td style='vertical-align: middle;'>" +
