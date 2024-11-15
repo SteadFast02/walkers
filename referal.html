@@ -31,6 +31,13 @@
     .slider.on .slider-circle {
         transform: translateX(26px);
     }
+    #lastreferral {
+    display: block; /* Make it block to add space around it */
+    font-weight: bold; /* Make the text bold */
+    font-size: 1.1em; /* Slightly larger font */
+    color: #4a90e2; /* Light blue color */
+    padding: 8px 0; /* Add padding to top and bottom */
+  }
 
     /* Table and Form responsiveness */
     @media (max-width: 768px) {
@@ -122,8 +129,8 @@
                                 <label for="exampleInputEmail1">Referral</label>
                                 <input type="text" placeholder="Enter amount to refer" class="form-control" id="referal">
                             </div>
+                            <span id="lastreferral">Last Referral</span>
                         </div>
-                        <!-- /.card-body -->
                         <div class="card-footer">
                             <button type="button" onclick="confirmReferal()" class="btn btn-primary btn-block">Confirm</button>
                         </div>

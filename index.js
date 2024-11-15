@@ -403,6 +403,7 @@ function loadReferalPage(p) {
     .empty()
     .load(p + ".html", function () {
       getReferal();
+      getReferralAmount();
       checkReferralBoostStatus();
     });
 }
@@ -448,12 +449,37 @@ function getReferal() {
       return response.json();
     })
     .then((data) => {
+      console.log(data);
       $("#referalContent").empty();
       if (isValidObject(data)) {
         for (let i = 0; i < data.length; i++) {
           appendReferals(data[i]);
         }
       }
+    })
+    .catch((error) => console.error(error));
+}
+
+function getReferralAmount() {
+  fetch("https://javaapi.abhiwandemos.com/api/v1/admin/referral-config", {
+    headers: {
+      Authorization: localStorage.getItem("t"),
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("API request failed");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Referral", data);
+
+      // Assuming data contains a property `lastReferralAmount` to display
+      const referralAmount = data || "No data available";
+      document.getElementById(
+        "lastreferral"
+      ).innerText = `Last Referral: ${referralAmount}`;
     })
     .catch((error) => console.error(error));
 }
@@ -729,13 +755,16 @@ function updateAdv(advId) {
 }
 
 function removeTask() {
-  fetch(REQUEST.ip + "/api/v1/admin/tasks/" + TASK_ID_TO_REMOVE, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: localStorage.getItem("t"),
-    },
-  })
+  fetch(
+    "https://javaapi.abhiwandemos.com/api/v1/admin/tasks/" + TASK_ID_TO_REMOVE,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: localStorage.getItem("t"),
+      },
+    }
+  )
     .then(() => {
       $("#modal-default-tasks").modal("hide");
       getTasks();
@@ -1472,6 +1501,7 @@ function confirmReferal() {
         `There was an error confirming the referral: ${error.message}. Please try again.`
       );
     });
+  getReferralAmount();
 }
 
 var isReferralBoostEnabled = false;
