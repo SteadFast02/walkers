@@ -413,7 +413,7 @@ function loadLeaderboardPage(p) {
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
-      // getAdv();
+      loadTaskTypes();
     });
 }
 
@@ -472,7 +472,6 @@ function getReferralAmount() {
       return response.json();
     })
     .then((data) => {
-
       // Assuming data contains a property `lastReferralAmount` to display
       const referralAmount = data || "No data available";
       document.getElementById(
@@ -550,7 +549,18 @@ function addAdv() {
   })
     .then((response) => response.json())
     .then((data) => {
-      alert("Advertisement Created Successfully");
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2, "0");
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const year = now.getFullYear();
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+
+      const currentDateTime = `${day}/${month}/${year} ${hours}:${minutes}`;
+      $("#advreservationtime").val(`${currentDateTime} - ${currentDateTime}`);
+
+      $("#advName").val("");
+      $("#advImageUpload").val("");
       getAdv(data);
     })
     .catch((error) => console.error(error));
@@ -625,6 +635,22 @@ function addTask() {
     .then((response) => response.json())
     .then((data) => {
       alert("Task Added Successfully");
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2, "0");
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const year = now.getFullYear();
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+
+      const currentDateTime = `${day}/${month}/${year} ${hours}:${minutes}`;
+      $("#reservationtime").val(`${currentDateTime} - ${currentDateTime}`);
+
+      $("#taskName").val("");
+      $("#taskImageUpload").val("");
+      $("#taskDescription").val("");
+      $("#taskReward").val("");
+      $("#forTestUserSlct").val("");
+      $("#forTwitterUserSlct").val("");
       getTasks();
     })
     .catch((error) => console.error(error));
@@ -1450,6 +1476,33 @@ function leaderBoardToggleSlider() {
     sliderStatus.innerText = "Private";
   }
   updateLeaderboard();
+}
+
+function loadTaskTypes() {
+  fetch(`https://javaapi.abhiwandemos.com/api/v1/admin/tasks-list`, {
+    headers: {
+      Authorization: localStorage.getItem("t"),
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to fetch task types");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const taskTypeSelect = document.getElementById("taskType");
+      taskTypeSelect.innerHTML = ""; // Clear existing options
+
+      // Populate the dropdown with task types from API response
+      data.forEach((task) => {
+        const option = document.createElement("option");
+        option.value = task; // Set value based on API response
+        option.textContent = task; // Display text based on API response
+        taskTypeSelect.appendChild(option);
+      });
+    })
+    .catch((error) => console.error("Error loading task types:", error));
 }
 
 function confirmReferal() {
