@@ -929,31 +929,24 @@ function toggleButtonState(a) {
 }
 
 function appendTasks(t) {
-  var isForTestUser = t.testUserTask;
-  var isForTwitterUser = "";
-
-  if (isForTestUser) {
-    isForTestUser = "Yes";
-  } else {
-    isForTestUser = "No";
-  }
-
-  if (t.twitterTask) {
-    isForTwitterUser = "Yes";
-  } else {
-    isForTwitterUser = "No";
-  }
-
-  if (t.twitterPostLink) {
-    twitterPostLink = t.twitterPostLink;
-  } else {
-    twitterPostLink = "NA";
-  }
+  var isForTestUser = t.testUserTask ? "Yes" : "No";
+  var isForTwitterUser = t.twitterTask ? "Yes" : "No";
+  var twitterPostLink = t.twitterPostLink || "NA";
 
   var img = "";
   if (isValidObject(t.image)) {
     img = "<img style='width:50px' src='" + t.image + "'/>";
   }
+
+  var twitterLinkContent =
+    twitterPostLink !== "NA"
+      ? "<a href='" +
+        twitterPostLink +
+        "' target='_blank'>" +
+        twitterPostLink +
+        "</a>"
+      : twitterPostLink;
+
   $("#taskContent").append(
     "<tr><td style='vertical-align: middle;'>" +
       t.name +
@@ -961,9 +954,9 @@ function appendTasks(t) {
       t.description +
       " </td><td style='vertical-align: middle;'>" +
       t.reward +
-      " </td><td style='vertical-align: middle;text-align: center;'>" +
-      twitterPostLink +
-      " </td><td style='vertical-align: middle;'>" +
+      " </td><td style='vertical-align: middle; text-align: center;'>" +
+      twitterLinkContent +
+      "</td><td style='vertical-align: middle;'>" +
       isForTwitterUser +
       " </td><td style='vertical-align: middle;'>" +
       isForTestUser +
