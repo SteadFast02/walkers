@@ -413,7 +413,9 @@ function loadLeaderboardPage(p) {
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
-      loadTaskTypes();
+      loadTaskTypes().then(() => {
+        updateLeaderboard();
+      });
     });
 }
 
@@ -472,7 +474,6 @@ function getReferralAmount() {
       return response.json();
     })
     .then((data) => {
-      // Assuming data contains a property `lastReferralAmount` to display
       const referralAmount = data || "No data available";
       document.getElementById(
         "lastreferral"
@@ -1433,11 +1434,37 @@ function referalToggleSlider() {
   }
 }
 
+function appendLeaderboard(data) {
+  const leaderboardContent = document.getElementById("leaderboardContent");
+  // Create a new table row
+  const row = document.createElement("tr");
+  // Create cells for rank, firstname, email, and earned XP
+  const rankCell = document.createElement("td");
+  rankCell.textContent = data.rank;
+
+  const firstnameCell = document.createElement("td");
+  firstnameCell.textContent = data.user.firstname || "N/A";
+
+  const emailCell = document.createElement("td");
+  emailCell.textContent = data.user.email;
+
+  const earnedXPCell = document.createElement("td");
+  earnedXPCell.textContent = data.earnedXP;
+
+  // Append cells to the row
+  row.appendChild(rankCell);
+  row.appendChild(firstnameCell);
+  row.appendChild(emailCell);
+  row.appendChild(earnedXPCell);
+
+  // Append the row to the table body
+  leaderboardContent.appendChild(row);
+}
+
 function updateLeaderboard() {
   const taskType = document.getElementById("taskType").value;
   const isVisible =
     document.getElementById("sliderStatus").innerText === "Public";
-
   fetch(
     `https://javaapi.abhiwandemos.com/api/v1/admin/tasks/leaderboard?taskName=${taskType}&isVisible=${isVisible}`,
     {
@@ -1450,21 +1477,24 @@ function updateLeaderboard() {
   )
     .then((response) => {
       if (response.ok) {
-        console.log("API request successful", response);
+        return response.json(); // Return the parsed JSON
       } else {
-        console.log("API request failed");
+        throw new Error("Failed to fetch leaderboard data");
       }
     })
     .then((data) => {
       $("#leaderboardContent").empty();
-      if (isValidObject(data)) {
-        for (var i = 0; i < data.length; i++) {
-          appendAdvs(data[i]);
+      if (Array.isArray(data)) {
+        // Validate the response is an array
+        for (let i = 0; i < data.length; i++) {
+          appendLeaderboard(data[i]);
         }
+      } else {
+        console.error("Invalid data format received:", data);
       }
     })
     .catch((error) => {
-      console.log("Error:", error);
+      console.error("Error fetching leaderboard data:", error);
     });
 }
 
@@ -1485,7 +1515,7 @@ function leaderBoardToggleSlider() {
 }
 
 function loadTaskTypes() {
-  fetch(`https://javaapi.abhiwandemos.com/api/v1/admin/tasks-list`, {
+  return fetch(`https://javaapi.abhiwandemos.com/api/v1/admin/tasks-list`, {
     headers: {
       Authorization: localStorage.getItem("t"),
     },
@@ -1498,13 +1528,11 @@ function loadTaskTypes() {
     })
     .then((data) => {
       const taskTypeSelect = document.getElementById("taskType");
-      taskTypeSelect.innerHTML = ""; // Clear existing options
-
-      // Populate the dropdown with task types from API response
+      taskTypeSelect.innerHTML = "";
       data.forEach((task) => {
         const option = document.createElement("option");
-        option.value = task; // Set value based on API response
-        option.textContent = task; // Display text based on API response
+        option.value = task;
+        option.textContent = task;
         taskTypeSelect.appendChild(option);
       });
     })
