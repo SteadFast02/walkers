@@ -414,7 +414,7 @@ function loadLeaderboardPage(p) {
     .empty()
     .load(p + ".html", function () {
       loadTaskTypes().then(() => {
-        updateLeaderboard();
+        // updateLeaderboard();
       });
     });
 }
@@ -474,10 +474,10 @@ function getReferralAmount() {
       return response.json();
     })
     .then((data) => {
-      const referralAmount = data || "No data available";
+      const referralAmount = data;
       document.getElementById(
         "lastreferral"
-      ).innerText = `Last Referral: ${referralAmount}`;
+      ).innerText = `CURRENT REFERRAL: ${referralAmount}`;
     })
     .catch((error) => console.error(error));
 }
@@ -575,12 +575,8 @@ function addTask() {
   }
 
   const reward = $("#taskReward").val().trim();
-  if (
-    !reward ||
-    isNaN(reward) ||
-    Number(reward) <= 0 ||
-    parseInt(reward) !== Number(reward)
-  ) {
+  console.log(reward);
+  if (reward < 0) {
     alert("Please enter a valid positive integer for the reward (XP).");
     return;
   }
@@ -668,7 +664,7 @@ function handleTwitterUserSelection() {
       inputBox.className = "form-control mt-2";
       inputBox.id = "twitterUsername";
       inputBox.value = "";
-      inputBox.placeholder = "Enter Twitter Username";
+      inputBox.placeholder = "Enter Twitter Postlink";
       inputContainer.appendChild(inputBox);
     }
   } else {
@@ -855,14 +851,17 @@ function removeAlert() {
       getAlerts();
     })
     .catch((error) => {
-      console.log(error);
+      error;
     });
 }
 
 function appendAdvs(a) {
+  Name = a.name ? a.name : "NA";
   var isForTestUser = a.testUserAdv ? "Yes" : "No";
   var img = a.linkUrl
-    ? "<img style='width:100px' src='" + a.linkUrl + "'/>"
+    ? "<img style='width:100px; height:100px; object-fit: cover; border: 1px solid #ccc;' src='" +
+      a.linkUrl +
+      "'/>"
     : "";
 
   var buttonText = a.active ? "Disable" : "Enable";
@@ -872,7 +871,7 @@ function appendAdvs(a) {
 
   $("#advContent").append(
     "<tr><td style='vertical-align: middle;'>" +
-      a.name +
+      Name +
       "</td><td style='vertical-align: middle;'>" +
       moment(a.startTime).format("DD/MM/YYYY HH:mm") +
       "</td><td style='vertical-align: middle;'>" +
@@ -975,13 +974,16 @@ function appendTasks(t) {
 }
 
 function appendReferals(t) {
+  firstname = t.userResponse.firstname ? t.userResponse.firstname : "NA";
+  email = t.userResponse.email ? t.userResponse.email : "NA";
+
   $("#referalContent").append(
     "<tr><td style='vertical-align: middle;'>" +
-      t.userResponse.firstname +
+      firstname +
       "</td><td style='vertical-align: middle;'>" +
-      t.userResponse.email +
+      email +
       "</td><td style='vertical-align: middle;'>" +
-      t.referralCount +
+      referralCount +
       "</td></tr>"
   );
 }
@@ -1454,10 +1456,140 @@ function appendLeaderboard(data) {
   leaderboardContent.appendChild(row);
 }
 
+function updateToggleState(taskName, isVisible) {
+  console.log("iamsun toggle val", isVisible);
+  const slider = document.getElementById("slider");
+  const sliderStatus = document.getElementById("sliderStatus");
+
+  slider.classList.toggle("on", isVisible);
+  sliderStatus.innerText = isVisible ? "Public" : "Private";
+}
+
+function loadTaskTypes() {
+  console.log("iamsun load tasking running");
+  return fetch(`https://javaapi.abhiwandemos.com/api/v1/admin/tasks-list`, {
+    headers: {
+      Authorization: localStorage.getItem("t"),
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to fetch task types");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const taskTypeSelect = document.getElementById("taskType");
+      const slider = document.getElementById("slider");
+      const sliderStatus = document.getElementById("sliderStatus");
+
+      taskTypeSelect.innerHTML = ""; // Clear existing options
+
+      // Store task visibility data for quick access
+      const taskVisibilityMap = {};
+
+      data.forEach((task) => {
+        const taskName = Object.keys(task)[0];
+        const isVisible = task[taskName];
+        taskVisibilityMap[taskName] = isVisible;
+        console.log("iamsun task name ", taskName);
+        console.log("iamsun isVisible name ", isVisible);
+        console.log(
+          "iamsun taskVisibilityMap[taskName] name ",
+          taskVisibilityMap[taskName]
+        );
+
+        const option = document.createElement("option");
+        option.value = taskName;
+        option.textContent = taskName;
+        taskTypeSelect.appendChild(option);
+      });
+
+      // Set the initial state for the first task
+      if (data.length > 0) {
+        const firstTask = Object.keys(data[0])[0];
+        taskTypeSelect.value = firstTask;
+        updateToggleState(firstTask, taskVisibilityMap[firstTask]);
+        updateLeaderboard(); // Trigger leaderboard update for the first option
+      }
+
+      // Add event listener to update toggle state on dropdown change
+      taskTypeSelect.addEventListener("change", (event) => {
+        const selectedTask = event.target.value;
+        updateToggleState(selectedTask, taskVisibilityMap[selectedTask]);
+      });
+    })
+    .catch((error) => console.error("Error loading task types:", error));
+}
+
+// function loadTaskTypes() {
+//   return fetch(`https://javaapi.abhiwandemos.com/api/v1/admin/tasks-list`, {
+//     headers: {
+//       Authorization: localStorage.getItem("t"),
+//     },
+//   })
+//     .then((response) => {
+//       if (!response.ok) {
+//         throw new Error("Failed to fetch task types");
+//       }
+//       return response.json();
+//     })
+//     .then((data) => {
+//       // console.log("11111111111111", data);
+//       const taskTypeSelect = document.getElementById("taskType");
+//       // console.log("22222222222222", taskTypeSelect);
+//       const slider = document.getElementById("slider");
+//       // console.log("33333333333333", slider);
+//       const sliderStatus = document.getElementById("sliderStatus");
+//       // console.log("44444444444444", sliderStatus);
+
+//       taskTypeSelect.innerHTML = ""; // Clear existing options
+
+//       // Populate the dropdown and set default toggle status
+//       data.forEach((task) => {
+//         const taskName = Object.keys(task)[0];
+//         const isVisible = task[taskName];
+
+//         const option = document.createElement("option");
+//         option.value = taskName;
+//         option.textContent = taskName;
+//         taskTypeSelect.appendChild(option);
+
+//         // Set default toggle status for the first task
+//         if (taskName === Object.keys(data[0])[0]) {
+//           slider.classList.toggle("on", isVisible);
+//           sliderStatus.innerText = isVisible ? "Public" : "Private";
+//         }
+//       });
+
+//       // Trigger leaderboard update for the first option by default
+//       if (data.length > 0) {
+//         taskTypeSelect.value = Object.keys(data[0])[0]; // Set the first value as selected
+//         updateLeaderboard(); // Update leaderboard immediately
+//       }
+
+//       taskTypeSelect.addEventListener("change", (event) => {
+//         const selectedTask = event.target.value;
+//         updateToggleState(selectedTask, taskVisibilityMap[selectedTask]);
+//       });
+//     })
+//     .catch((error) => console.error("Error loading task types:", error));
+// }
+
 function updateLeaderboard() {
   const taskType = document.getElementById("taskType").value;
+  fetch(`https://javaapi.abhiwandemos.com/api/v1/admin/tasks-list`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: localStorage.getItem("t"),
+    },
+  });
+
   const isVisible =
     document.getElementById("sliderStatus").innerText === "Public";
+
+  console.log("UpdateLeaderboard111111111111111111", taskType, isVisible);
   fetch(
     `https://javaapi.abhiwandemos.com/api/v1/admin/tasks/leaderboard?taskName=${taskType}&isVisible=${isVisible}`,
     {
@@ -1491,60 +1623,55 @@ function updateLeaderboard() {
     });
 }
 
-document
-  .getElementById("taskType")
-  .addEventListener("change", updateLeaderboard);
-
 function leaderBoardToggleSlider() {
   const slider = document.getElementById("slider");
   const sliderStatus = document.getElementById("sliderStatus");
-  slider.classList.toggle("on");
-  if (slider.classList.contains("on")) {
-    sliderStatus.innerText = "Public";
-  } else {
-    sliderStatus.innerText = "Private";
-  }
-  updateLeaderboard();
-}
+  const taskType = document.getElementById("taskType").value;
+  const isVisible = slider.classList.contains("on");
 
-function loadTaskTypes() {
-  return fetch(`https://javaapi.abhiwandemos.com/api/v1/admin/tasks-list`, {
-    headers: {
-      Authorization: localStorage.getItem("t"),
-    },
-  })
+  // Toggle slider class
+  slider.classList.toggle("on", !isVisible);
+  sliderStatus.innerText = !isVisible ? "Public" : "Private";
+
+  // Call the PATCH API to update visibility
+  fetch(
+    `https://javaapi.abhiwandemos.com/api/v1/admin/${taskType}/leaderboard/visibility?visible=${!isVisible}`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: localStorage.getItem("t"),
+      },
+    }
+  )
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Failed to fetch task types");
+        throw new Error("Failed to update leaderboard visibility");
       }
-      return response.json();
     })
     .then((data) => {
-      const taskTypeSelect = document.getElementById("taskType");
-      taskTypeSelect.innerHTML = "";
-      data.forEach((task) => {
-        const option = document.createElement("option");
-        option.value = task;
-        option.textContent = task;
-        taskTypeSelect.appendChild(option);
-      });
+      console.log("Visibility updated successfully:", data);
+      loadTaskTypes();
+      updateLeaderboard(); // Trigger leaderboard update for the first option
     })
-    .catch((error) => console.error("Error loading task types:", error));
+    .catch((error) => {
+      console.error("Error updating visibility:", error);
+    });
 }
 
 function confirmReferal() {
   const referralAmount = document.getElementById("referal").value.trim();
-  if (!referralAmount || isNaN(referralAmount) || Number(referralAmount) <= 0) {
-    alert("Please enter a valid amount to refer.");
+  if (isNaN(referralAmount) || referralAmount === "") {
+    alert("Please enter a valid number for the referral amount.");
+    return; // Exit the function
+  }
+
+  // Check if the input is a positive integer greater than zero
+  if (Number(referralAmount) < 0) {
+    alert("Please enter a valid positive Amount.");
     return;
   }
-  if (
-    referralAmount.includes(".") ||
-    parseInt(referralAmount) !== Number(referralAmount)
-  ) {
-    alert("Please enter a valid positive integer without decimals.");
-    return;
-  }
+
+  // Proceed with the API call
   fetch(
     `https://javaapi.abhiwandemos.com/api/v1/admin/referral-config?referralValue=${Number(
       referralAmount
@@ -1568,8 +1695,8 @@ function confirmReferal() {
     })
     .then((responseData) => {
       alert("Referral amount confirmed successfully!");
-      document.getElementById("referal").value = "";
-      getReferralAmount();
+      document.getElementById("referal").value = ""; // Clear input after success
+      getReferralAmount(); // Refresh referral amount display
     })
     .catch((error) => {
       console.error("Error confirming referral:", error);
