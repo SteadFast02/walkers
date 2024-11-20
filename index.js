@@ -1441,7 +1441,7 @@ function appendLeaderboard(data) {
   rankCell.textContent = data.rank;
 
   const firstnameCell = document.createElement("td");
-  firstnameCell.textContent = data.user.firstname || "N/A";
+  firstnameCell.textContent = data.user.firstname || "NA";
 
   const emailCell = document.createElement("td");
   emailCell.textContent = data.user.email;
