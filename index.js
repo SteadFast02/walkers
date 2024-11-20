@@ -439,6 +439,7 @@ function getTasks() {
 }
 
 function getReferal() {
+  console.log("HEllo");
   fetch("https://javaapi.abhiwandemos.com/api/v1/admin/referral/list", {
     headers: {
       Authorization: localStorage.getItem("t"),
@@ -451,6 +452,7 @@ function getReferal() {
       return response.json();
     })
     .then((data) => {
+      console.log("World");
       $("#referalContent").empty();
       if (isValidObject(data)) {
         for (let i = 0; i < data.length; i++) {
@@ -974,8 +976,9 @@ function appendTasks(t) {
 }
 
 function appendReferals(t) {
-  firstname = t.userResponse.firstname ? t.userResponse.firstname : "NA";
-  email = t.userResponse.email ? t.userResponse.email : "NA";
+  let firstname = t.userResponse.firstname ? t.userResponse.firstname : "NA";
+  let email = t.userResponse.email ? t.userResponse.email : "NA";
+  let referralCount = t.referralCount ? t.referralCount : 0;
 
   $("#referalContent").append(
     "<tr><td style='vertical-align: middle;'>" +
