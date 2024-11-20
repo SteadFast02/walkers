@@ -39,8 +39,7 @@ function loadPage(page) {
 function checkLogin() {
   const token = localStorage.getItem("t");
   if (!token) {
-    // If no token is found, redirect to the login page
-    window.location.href = "https://walkers-alpha.vercel.app/login.html"; // Modify the path as needed
+    window.location.href = "https://walkers-alpha.vercel.app/login.html";
     return;
   }
 }
@@ -413,9 +412,7 @@ function loadLeaderboardPage(p) {
   $("#pageContent")
     .empty()
     .load(p + ".html", function () {
-      loadTaskTypes().then(() => {
-        // updateLeaderboard();
-      });
+      loadTaskTypes().then(() => {});
     });
 }
 
@@ -439,7 +436,6 @@ function getTasks() {
 }
 
 function getReferal() {
-  console.log("HEllo");
   fetch("https://javaapi.abhiwandemos.com/api/v1/admin/referral/list", {
     headers: {
       Authorization: localStorage.getItem("t"),
@@ -452,7 +448,6 @@ function getReferal() {
       return response.json();
     })
     .then((data) => {
-      console.log("World");
       $("#referalContent").empty();
       if (isValidObject(data)) {
         for (let i = 0; i < data.length; i++) {
@@ -577,7 +572,6 @@ function addTask() {
   }
 
   const reward = $("#taskReward").val().trim();
-  console.log(reward);
   if (reward < 0) {
     alert("Please enter a valid positive integer for the reward (XP).");
     return;
@@ -1167,14 +1161,12 @@ function uploadUpdatedAdvFile(event, type) {
 }
 
 function uploadFile(event, type) {
-  // Create a new FormData object
   const file = event.target.files[0];
   if (!file) return;
 
   const formData = new FormData();
   formData.append("file", file);
 
-  // Create the fetch request
   fetch(REQUEST.ip + "/api/v1/admin/upload-image", {
     headers: {
       Authorization: localStorage.getItem("t"),
@@ -1243,18 +1235,15 @@ function sort(column) {
 }
 
 function headline(column) {
-  // Get all th elements
   var headers = document
     .getElementById("usersTable")
     .getElementsByTagName("th");
 
-  // Remove "sorted" class from all th elements
   for (var i = 0; i < headers.length; i++) {
     headers[i].classList.remove("sorted");
-    headers[i].style.color = "black"; // Set text color to black for all headers
+    headers[i].style.color = "black";
   }
 
-  // Add "sorted" class and set text color to red for the clicked th element
   var clickedHeader = document.querySelector(
     "#usersTable th[onclick=\"sort('" + column + "')\"]"
   );
@@ -1326,13 +1315,10 @@ function generateQrCode(userId) {
 }
 
 function isWithinLast24Hours(timestamp) {
-  // Get the current time in milliseconds
   var currentTime = Date.now();
 
-  // Calculate the time difference between the current time and the given timestamp
   var timeDifference = currentTime - timestamp;
 
-  // Check if the time difference is less than 24 hours (24 hours * 60 minutes * 60 seconds * 1000 milliseconds)
   var isWithin24Hours = timeDifference < 24 * 60 * 60 * 1000;
 
   return isWithin24Hours;
@@ -1434,9 +1420,7 @@ function referalToggleSlider() {
 
 function appendLeaderboard(data) {
   const leaderboardContent = document.getElementById("leaderboardContent");
-  // Create a new table row
   const row = document.createElement("tr");
-  // Create cells for rank, firstname, email, and earned XP
   const rankCell = document.createElement("td");
   rankCell.textContent = data.rank;
 
@@ -1449,18 +1433,15 @@ function appendLeaderboard(data) {
   const earnedXPCell = document.createElement("td");
   earnedXPCell.textContent = data.earnedXP;
 
-  // Append cells to the row
   row.appendChild(rankCell);
   row.appendChild(firstnameCell);
   row.appendChild(emailCell);
   row.appendChild(earnedXPCell);
 
-  // Append the row to the table body
   leaderboardContent.appendChild(row);
 }
 
 function updateToggleState(taskName, isVisible) {
-  console.log("iamsun toggle val", isVisible);
   const slider = document.getElementById("slider");
   const sliderStatus = document.getElementById("sliderStatus");
 
@@ -1469,7 +1450,6 @@ function updateToggleState(taskName, isVisible) {
 }
 
 function loadTaskTypes() {
-  console.log("iamsun load tasking running");
   return fetch(`https://javaapi.abhiwandemos.com/api/v1/admin/tasks-list`, {
     headers: {
       Authorization: localStorage.getItem("t"),
@@ -1486,37 +1466,27 @@ function loadTaskTypes() {
       const slider = document.getElementById("slider");
       const sliderStatus = document.getElementById("sliderStatus");
 
-      taskTypeSelect.innerHTML = ""; // Clear existing options
+      taskTypeSelect.innerHTML = "";
 
-      // Store task visibility data for quick access
       const taskVisibilityMap = {};
 
       data.forEach((task) => {
         const taskName = Object.keys(task)[0];
         const isVisible = task[taskName];
         taskVisibilityMap[taskName] = isVisible;
-        console.log("iamsun task name ", taskName);
-        console.log("iamsun isVisible name ", isVisible);
-        console.log(
-          "iamsun taskVisibilityMap[taskName] name ",
-          taskVisibilityMap[taskName]
-        );
-
         const option = document.createElement("option");
         option.value = taskName;
         option.textContent = taskName;
         taskTypeSelect.appendChild(option);
       });
 
-      // Set the initial state for the first task
       if (data.length > 0) {
         const firstTask = Object.keys(data[0])[0];
         taskTypeSelect.value = firstTask;
         updateToggleState(firstTask, taskVisibilityMap[firstTask]);
-        updateLeaderboard(); // Trigger leaderboard update for the first option
+        updateLeaderboard();
       }
 
-      // Add event listener to update toggle state on dropdown change
       taskTypeSelect.addEventListener("change", (event) => {
         const selectedTask = event.target.value;
         updateToggleState(selectedTask, taskVisibilityMap[selectedTask]);
@@ -1524,60 +1494,6 @@ function loadTaskTypes() {
     })
     .catch((error) => console.error("Error loading task types:", error));
 }
-
-// function loadTaskTypes() {
-//   return fetch(`https://javaapi.abhiwandemos.com/api/v1/admin/tasks-list`, {
-//     headers: {
-//       Authorization: localStorage.getItem("t"),
-//     },
-//   })
-//     .then((response) => {
-//       if (!response.ok) {
-//         throw new Error("Failed to fetch task types");
-//       }
-//       return response.json();
-//     })
-//     .then((data) => {
-//       // console.log("11111111111111", data);
-//       const taskTypeSelect = document.getElementById("taskType");
-//       // console.log("22222222222222", taskTypeSelect);
-//       const slider = document.getElementById("slider");
-//       // console.log("33333333333333", slider);
-//       const sliderStatus = document.getElementById("sliderStatus");
-//       // console.log("44444444444444", sliderStatus);
-
-//       taskTypeSelect.innerHTML = ""; // Clear existing options
-
-//       // Populate the dropdown and set default toggle status
-//       data.forEach((task) => {
-//         const taskName = Object.keys(task)[0];
-//         const isVisible = task[taskName];
-
-//         const option = document.createElement("option");
-//         option.value = taskName;
-//         option.textContent = taskName;
-//         taskTypeSelect.appendChild(option);
-
-//         // Set default toggle status for the first task
-//         if (taskName === Object.keys(data[0])[0]) {
-//           slider.classList.toggle("on", isVisible);
-//           sliderStatus.innerText = isVisible ? "Public" : "Private";
-//         }
-//       });
-
-//       // Trigger leaderboard update for the first option by default
-//       if (data.length > 0) {
-//         taskTypeSelect.value = Object.keys(data[0])[0]; // Set the first value as selected
-//         updateLeaderboard(); // Update leaderboard immediately
-//       }
-
-//       taskTypeSelect.addEventListener("change", (event) => {
-//         const selectedTask = event.target.value;
-//         updateToggleState(selectedTask, taskVisibilityMap[selectedTask]);
-//       });
-//     })
-//     .catch((error) => console.error("Error loading task types:", error));
-// }
 
 function updateLeaderboard() {
   const taskType = document.getElementById("taskType").value;
@@ -1592,7 +1508,6 @@ function updateLeaderboard() {
   const isVisible =
     document.getElementById("sliderStatus").innerText === "Public";
 
-  console.log("UpdateLeaderboard111111111111111111", taskType, isVisible);
   fetch(
     `https://javaapi.abhiwandemos.com/api/v1/admin/tasks/leaderboard?taskName=${taskType}&isVisible=${isVisible}`,
     {
@@ -1605,7 +1520,7 @@ function updateLeaderboard() {
   )
     .then((response) => {
       if (response.ok) {
-        return response.json(); // Return the parsed JSON
+        return response.json();
       } else {
         throw new Error("Failed to fetch leaderboard data");
       }
@@ -1613,7 +1528,6 @@ function updateLeaderboard() {
     .then((data) => {
       $("#leaderboardContent").empty();
       if (Array.isArray(data)) {
-        // Validate the response is an array
         for (let i = 0; i < data.length; i++) {
           appendLeaderboard(data[i]);
         }
@@ -1632,11 +1546,9 @@ function leaderBoardToggleSlider() {
   const taskType = document.getElementById("taskType").value;
   const isVisible = slider.classList.contains("on");
 
-  // Toggle slider class
   slider.classList.toggle("on", !isVisible);
   sliderStatus.innerText = !isVisible ? "Public" : "Private";
 
-  // Call the PATCH API to update visibility
   fetch(
     `https://javaapi.abhiwandemos.com/api/v1/admin/${taskType}/leaderboard/visibility?visible=${!isVisible}`,
     {
@@ -1652,9 +1564,8 @@ function leaderBoardToggleSlider() {
       }
     })
     .then((data) => {
-      console.log("Visibility updated successfully:", data);
       loadTaskTypes();
-      updateLeaderboard(); // Trigger leaderboard update for the first option
+      updateLeaderboard();
     })
     .catch((error) => {
       console.error("Error updating visibility:", error);
@@ -1665,16 +1576,14 @@ function confirmReferal() {
   const referralAmount = document.getElementById("referal").value.trim();
   if (isNaN(referralAmount) || referralAmount === "") {
     alert("Please enter a valid number for the referral amount.");
-    return; // Exit the function
+    return;
   }
 
-  // Check if the input is a positive integer greater than zero
   if (Number(referralAmount) < 0) {
     alert("Please enter a valid positive Amount.");
     return;
   }
 
-  // Proceed with the API call
   fetch(
     `https://javaapi.abhiwandemos.com/api/v1/admin/referral-config?referralValue=${Number(
       referralAmount
@@ -1698,8 +1607,8 @@ function confirmReferal() {
     })
     .then((responseData) => {
       alert("Referral amount confirmed successfully!");
-      document.getElementById("referal").value = ""; // Clear input after success
-      getReferralAmount(); // Refresh referral amount display
+      document.getElementById("referal").value = "";
+      getReferralAmount();
     })
     .catch((error) => {
       console.error("Error confirming referral:", error);
