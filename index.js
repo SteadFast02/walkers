@@ -506,6 +506,7 @@ function addAdv() {
     alert("Please enter a name for the advertisement.");
     return;
   }
+
   const dateStringFrom = fromTo[0].trim();
   const [dateFrom, timeFrom] = dateStringFrom.split(" ");
   const [dayFrom, monthFrom, yearFrom] = dateFrom.split("/");
@@ -534,6 +535,10 @@ function addAdv() {
   data.testUserAdv = false;
   if ($("#forTestUserSlct :selected").val() == "yes") {
     data.testUserAdv = true;
+  }
+  if (!data.linkUrl && !data.image) {
+    alert("Please Provide image");
+    return;
   }
 
   // fetch(REQUEST.ip + 'https://javaapi.abhiwandemos.com/api/v1/ads', {
@@ -615,6 +620,11 @@ function addTask() {
     twitterTask: twitterTaskSelected,
     twitterPostLink: twitterPostLink,
   };
+
+  if (!data.image) {
+    alert("Please Provide Image");
+    return;
+  }
 
   // fetch(REQUEST.ip + "/api/v1/admin/tasks", {
   fetch("https://javaapi.abhiwandemos.com/api/v1/admin/tasks", {
@@ -1113,8 +1123,27 @@ function addAlert() {
 
 function uploadAdvFile(event, type) {
   const file = event.target.files[0];
-  if (!file) return;
+  if (!file) {
+    alert("image not provided in valid format");
+    $("#advImageUpload").val("");
+    return;
+  }
 
+  const allowedExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp"];
+  const fileExtension = file.name.split(".").pop().toLowerCase();
+  if (!allowedExtensions.includes(fileExtension)) {
+    alert(
+      "Invalid file type. Please upload an image with a valid format (jpg, jpeg, png, etc.)."
+    );
+    $("#advImageUpload").val("");
+    return;
+  }
+
+  if (file.size > 500000) {
+    alert("File size is too large");
+    $("#advImageUpload").val("");
+    return;
+  }
   const formData = new FormData();
   formData.append("file", file);
   fetch(REQUEST.ip + "/api/v1/admin/upload-image", {
@@ -1137,11 +1166,29 @@ function uploadAdvFile(event, type) {
 
 function uploadUpdatedAdvFile(event, type) {
   const file = event.target.files[0];
-  if (!file) return;
+  if (!file) {
+    alert("image not provided in valid format");
+    $("#advUpdatedImageUpload").val("");
+    return;
+  }
 
+  const allowedExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp"];
+  const fileExtension = file.name.split(".").pop().toLowerCase();
+  if (!allowedExtensions.includes(fileExtension)) {
+    alert(
+      "Invalid file type. Please upload an image with a valid format (jpg, jpeg, png, etc.)."
+    );
+    $("#advUpdatedImageUpload").val("");
+    return;
+  }
+
+  if (file.size > 500000) {
+    alert("File size is too large");
+    $("#advUpdatedImageUpload").val("");
+    return;
+  }
   const formData = new FormData();
   formData.append("file", file);
-
   fetch(REQUEST.ip + "/api/v1/admin/upload-image", {
     headers: {
       Authorization: localStorage.getItem("t"),
@@ -1162,7 +1209,27 @@ function uploadUpdatedAdvFile(event, type) {
 
 function uploadFile(event, type) {
   const file = event.target.files[0];
-  if (!file) return;
+  if (!file) {
+    alert("image not provided in valid format");
+    $("#taskImageUpload").val("");
+    return;
+  }
+
+  const allowedExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp"];
+  const fileExtension = file.name.split(".").pop().toLowerCase();
+  if (!allowedExtensions.includes(fileExtension)) {
+    alert(
+      "Invalid file type. Please upload an image with a valid format (jpg, jpeg, png, etc.)."
+    );
+    $("#taskImageUpload").val("");
+    return;
+  }
+
+  if (file.size > 500000) {
+    alert("File size is too large");
+    $("#taskImageUpload").val("");
+    return;
+  }
 
   const formData = new FormData();
   formData.append("file", file);
@@ -1566,6 +1633,9 @@ function leaderBoardToggleSlider() {
     .then((data) => {
       loadTaskTypes();
       updateLeaderboard();
+      // Manually set the dropdown value to keep it sticky after update
+      const dropdown = document.getElementById("taskType");
+      dropdown.value = taskType;
     })
     .catch((error) => {
       console.error("Error updating visibility:", error);
