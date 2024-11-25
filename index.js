@@ -974,9 +974,11 @@ function appendAdvs(a) {
   Name = a.name ? a.name : "NA";
   var isForTestUser = a.testUserAdv ? "Yes" : "No";
   var img = a.linkUrl
-    ? "<img style='width:100px; height:100px; object-fit: cover; border: 1px solid #ccc;' src='" +
+    ? "<img style='width:70px; height:40px; object-fit: cover; border: 1px solid #ccc; cursor: pointer;' src='" +
       a.linkUrl +
-      "'/>"
+      "' onclick='openAdvImageModal(\"" +
+      a.linkUrl +
+      "\")'/>"
     : "";
 
   var buttonText = a.active ? "Disable" : "Enable";
@@ -1015,6 +1017,11 @@ function appendAdvs(a) {
       "\")' class='btn btn-default' data-toggle='modal' data-target='#modal-default-advremove'>x</button>" +
       "</td></tr>"
   );
+}
+
+function openAdvImageModal(imageUrl) {
+  $("#advModalImage").attr("src", imageUrl); // Set the image URL in the modal
+  $("#advImageModal").modal("show"); // Show the modal
 }
 
 function toggleButtonState(a) {
