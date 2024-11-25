@@ -416,46 +416,154 @@ function loadLeaderboardPage(p) {
     });
 }
 
-function getTasks() {
-  // fetch(REQUEST.ip + "/api/v1/admin/tasks", {
-  fetch("https://javaapi.abhiwandemos.com/api/v1/admin/tasks", {
-    headers: {
-      Authorization: localStorage.getItem("t"),
-    },
-  })
+let taskCurrentPage = 1;
+let taskPageSize = 5; // Default page size
+
+function getTasks(page = 1, size = 5) {
+  taskCurrentPage = page; // Track current page
+
+  fetch(
+    `https://javaapi.abhiwandemos.com/api/v1/admin/tasks/pagination?page=${page}&size=${size}`,
+    {
+      headers: {
+        Authorization: localStorage.getItem("t"),
+      },
+    }
+  )
     .then((response) => response.json())
     .then((data) => {
       $("#taskContent").empty();
-      if (isValidObject(data)) {
-        for (var i = 0; i < data.length; i++) {
-          appendTasks(data[i]);
-        }
+
+      // Populate tasks
+      if (data && Array.isArray(data.content)) {
+        data.content.forEach((task) => {
+          appendTasks(task);
+        });
+      }
+
+      // Generate pagination
+      if (data.totalPages) {
+        console.log("----1", data.totalPages);
+        generateTaskPagination(data.totalPages);
       }
     })
-    .catch((error) => console.error(error));
+    .catch((error) => console.error("Error fetching tasks:", error));
 }
 
-function getReferal() {
-  fetch("https://javaapi.abhiwandemos.com/api/v1/admin/referral/list", {
-    headers: {
-      Authorization: localStorage.getItem("t"),
-    },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("API request failed");
-      }
-      return response.json();
-    })
+function generateTaskPagination(totalPages) {
+  const pagination = $("#taskpagination");
+  pagination.empty();
+  if (totalPages < 2) {
+    pagination.empty();
+    return;
+  }
+
+  // Previous Button
+  const prevDisabled = taskCurrentPage === 1 ? "disabled" : "";
+  pagination.append(
+    `<li class="page-item ${prevDisabled}">
+      <a class="page-link" href="#" onclick="getTasks(${
+        taskCurrentPage - 1
+      }, ${taskPageSize})">Previous</a>
+    </li>`
+  );
+
+  // Page Numbers
+  for (let i = 1; i < totalPages; i++) {
+    const activeClass = i === taskCurrentPage ? "active" : "";
+    pagination.append(
+      `<li class="page-item ${activeClass}">
+        <a class="page-link" href="#" onclick="getTasks(${i}, ${taskPageSize})">${i}</a>
+      </li>`
+    );
+  }
+
+  // Next Button
+  const nextDisabled = taskCurrentPage === totalPages - 1 ? "disabled" : "";
+  pagination.append(
+    `<li class="page-item ${nextDisabled}">
+      <a class="page-link" href="#" onclick="getTasks(${
+        taskCurrentPage + 1
+      }, ${taskPageSize})">Next</a>
+    </li>`
+  );
+}
+
+let CurrentPage = 0;
+let PageSize = 5; // Default page size
+
+function getReferal(page = 0, size = 5) {
+  CurrentPage = page; // Track current page
+
+  fetch(
+    `https://javaapi.abhiwandemos.com/api/v1/admin/referal-list/pagination?page=${page}&size=${size}`,
+    {
+      headers: {
+        Authorization: localStorage.getItem("t"),
+      },
+    }
+  )
+    .then((response) => response.json())
     .then((data) => {
       $("#referalContent").empty();
-      if (isValidObject(data)) {
-        for (let i = 0; i < data.length; i++) {
-          appendReferals(data[i]);
-        }
+
+      // Populate referals
+      if (data && Array.isArray(data.content)) {
+        data.content.forEach((task) => {
+          appendReferals(task);
+        });
+      }
+
+      // Generate pagination
+      if (data.totalPages) {
+        generatePagination(data.totalPages);
       }
     })
-    .catch((error) => console.error(error));
+    .catch((error) => console.error("Error fetching tasks:", error));
+}
+
+function generatePagination(totalPages) {
+  console.log(totalPages);
+  const pagination = $("#pagination");
+  pagination.empty();
+
+  if (totalPages < 1) {
+    return; // No pagination needed if less than two pages
+  }
+
+  // Previous Button
+  const prevDisabled = CurrentPage === 0 ? "disabled" : "";
+  pagination.append(
+    `<li class="page-item ${prevDisabled}">
+      <a class="page-link" href="#" onclick="getReferal(${
+        CurrentPage - 1
+      }, ${PageSize})">Previous</a>
+    </li>`
+  );
+
+  // Page Numbers
+  for (let i = 0; i < totalPages; i++) {
+    // Include the last page (i <= totalPages)
+    const activeClass = i === CurrentPage ? "active" : "";
+    pagination.append(
+      `<li class="page-item ${activeClass}">
+        <a class="page-link" href="#" onclick="getReferal(${i}, ${PageSize})">${
+        i + 1
+      }</a>
+      </li>`
+    );
+  }
+
+  // Next Button
+  const nextDisabled = CurrentPage === totalPages - 1 ? "disabled" : "";
+  console.log(CurrentPage, totalPages);
+  pagination.append(
+    `<li class="page-item ${nextDisabled}">
+      <a class="page-link" href="#" onclick="getReferal(${
+        CurrentPage + 1
+      }, ${PageSize})">Next</a>
+    </li>`
+  );
 }
 
 function getReferralAmount() {
@@ -654,6 +762,7 @@ function addTask() {
       $("#taskReward").val("");
       $("#forTestUserSlct").val("");
       $("#forTwitterUserSlct").val("");
+      $("#twitterUsername").val("");
       getTasks();
     })
     .catch((error) => console.error(error));
@@ -938,9 +1047,26 @@ function appendTasks(t) {
   var isForTwitterUser = t.twitterTask ? "Yes" : "No";
   var twitterPostLink = t.twitterPostLink || "NA";
 
+  // Truncate description if more than 5 words
+  var fullDescription = t.description;
+  var truncatedDescription = t.description.split(" ").slice(0, 5).join(" ");
+  if (t.description.split(" ").length > 5) {
+    truncatedDescription +=
+      " ... <button class='btn btn-link btn-sm' onclick='showTaskDescriptionModal(\"" +
+      t.name.replace(/"/g, "&quot;") +
+      '", "' +
+      fullDescription.replace(/"/g, "&quot;").replace(/'/g, "&#39;") +
+      "\")'>more</button>";
+  }
+
   var img = "";
   if (isValidObject(t.image)) {
-    img = "<img style='width:50px' src='" + t.image + "'/>";
+    img =
+      "<img style='width:50px; height:auto; cursor:pointer;' src='" +
+      t.image +
+      "' onclick='showTaskImageModal(\"" +
+      t.image.replace(/"/g, "&quot;") +
+      "\")'/>";
   }
 
   var twitterLinkContent =
@@ -953,45 +1079,74 @@ function appendTasks(t) {
       : twitterPostLink;
 
   $("#taskContent").append(
-    "<tr><td style='vertical-align: middle;'>" +
+    "<tr>" +
+      "<td>" +
       t.name +
-      "</td><td style='vertical-align: middle;'>" +
-      t.description +
-      " </td><td style='vertical-align: middle;'>" +
+      "</td>" +
+      "<td>" +
+      truncatedDescription +
+      "</td>" +
+      "<td>" +
       t.reward +
-      " </td><td style='vertical-align: middle; text-align: center;'>" +
+      "</td>" +
+      "<td>" +
       twitterLinkContent +
-      "</td><td style='vertical-align: middle;'>" +
+      "</td>" +
+      "<td>" +
       isForTwitterUser +
-      " </td><td style='vertical-align: middle;'>" +
+      "</td>" +
+      "<td>" +
       isForTestUser +
-      " </td><td style='vertical-align: middle;'>" +
+      "</td>" +
+      "<td>" +
       moment(t.startDate).format("DD/MM/YYYY HH:mm") +
-      " </td><td style='vertical-align: middle;'>" +
+      "</td>" +
+      "<td>" +
       moment(t.endDate).format("DD/MM/YYYY HH:mm") +
-      " </td><td style='text-align: center;'>" +
+      "</td>" +
+      "<td>" +
       img +
-      "</td><td style='text-align:center'>  <button type='button' onclick='openModalRemoveTask(\"" +
+      "</td>" +
+      "<td>" +
+      "<button type='button' onclick='openModalRemoveTask(\"" +
       t.id +
       '", "' +
       t.name +
-      "\")' class='btn btn-default' data-toggle='modal' data-target='#modal-default-tasks'>x</button></td></tr>"
+      "\")' class='btn btn-default' data-toggle='modal' data-target='#modal-default-tasks'>x</button>" +
+      "</td>" +
+      "</tr>"
   );
 }
 
+// Function to show the full description in a modal
+function showTaskDescriptionModal(taskName, fullDescription) {
+  $("#taskDescriptionModalTitle").text(taskName + " Description");
+  $("#taskDescriptionModalBody").text(fullDescription);
+  $("#taskDescriptionModal").modal("show");
+}
+
+// Function to show the image in a modal
+function showTaskImageModal(imageUrl) {
+  $("#taskImageModalBody").html(
+    "<img src='" + imageUrl + "' class='img-fluid' />"
+  );
+  $("#taskImageModal").modal("show");
+}
+
 function appendReferals(t) {
-  let firstname = t.userResponse.firstname ? t.userResponse.firstname : "NA";
+  // Fallback to "Unknown" if firstname is empty
+  let firstname = t.userResponse.firstname
+    ? t.userResponse.firstname
+    : "Unknown";
   let email = t.userResponse.email ? t.userResponse.email : "NA";
   let referralCount = t.referralCount ? t.referralCount : 0;
 
   $("#referalContent").append(
-    "<tr><td style='vertical-align: middle;'>" +
-      firstname +
-      "</td><td style='vertical-align: middle;'>" +
-      email +
-      "</td><td style='vertical-align: middle;'>" +
-      referralCount +
-      "</td></tr>"
+    `<tr>
+      <td style='vertical-align: middle;'>${firstname}</td>
+      <td style='vertical-align: middle;'>${email}</td>
+      <td style='vertical-align: middle;'>${referralCount}</td>
+    </tr>`
   );
 }
 
