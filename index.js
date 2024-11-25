@@ -359,6 +359,7 @@ function loadTaskPage(p) {
         locale: {
           format: "DD/MM/YYYY HH:mm",
         },
+        minDate: new Date(),
       });
     });
 }
@@ -384,6 +385,7 @@ function loadAdvPage(p) {
         locale: {
           format: "DD/MM/YYYY HH:mm",
         },
+        minDate: new Date(),
       });
 
       $("#reservationtimeupdate").daterangepicker({
@@ -392,6 +394,7 @@ function loadAdvPage(p) {
         locale: {
           format: "DD/MM/YYYY HH:mm",
         },
+        minDate: new Date(),
       });
     });
 }
