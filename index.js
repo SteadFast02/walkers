@@ -584,23 +584,77 @@ function getReferralAmount() {
     .catch((error) => console.error(error));
 }
 
-function getAdv() {
-  //   fetch(REQUEST.ip + "/api/v1/admin/tasks", {
-  fetch("https://javaapi.abhiwandemos.com/api/v1/ads", {
-    headers: {
-      Authorization: localStorage.getItem("t"),
-    },
-  })
+let advCurrentPage = 0;
+let advPageSize = 5; // Default page size
+
+function getAdv(page = 0, size = 5) {
+  advCurrentPage = page; // Update current page
+  fetch(
+    `https://javaapi.abhiwandemos.com/api/v1/ads/list/paginated?page=${page}&size=${size}`,
+    {
+      headers: {
+        Authorization: localStorage.getItem("t"),
+      },
+    }
+  )
     .then((response) => response.json())
     .then((data) => {
       $("#advContent").empty();
-      if (isValidObject(data)) {
-        for (var i = 0; i < data.length; i++) {
-          appendAdvs(data[i]);
-        }
+
+      // Populate advertisements
+      if (data && Array.isArray(data.content)) {
+        data.content.forEach((adv) => {
+          appendAdvs(adv);
+        });
+      }
+
+      // Generate pagination
+      if (data.totalPages) {
+        generateAdvPagination(data.totalPages);
       }
     })
-    .catch((error) => console.error(error));
+    .catch((error) => console.error("Error fetching advertisements:", error));
+}
+
+function generateAdvPagination(totalPages) {
+  const pagination = $("#advpagination");
+  pagination.empty();
+
+  if (totalPages < 1) {
+    return; // No pagination needed if there’s only one page
+  }
+
+  // Previous Button
+  const prevDisabled = advCurrentPage === 0 ? "disabled" : "";
+  pagination.append(
+    `<li class="page-item ${prevDisabled}">
+      <a class="page-link" href="#" onclick="getAdv(${
+        advCurrentPage - 1
+      }, ${advPageSize})">Previous</a>
+    </li>`
+  );
+
+  // Page Numbers
+  for (let i = 0; i < totalPages; i++) {
+    const activeClass = i === advCurrentPage ? "active" : "";
+    pagination.append(
+      `<li class="page-item ${activeClass}">
+        <a class="page-link" href="#" onclick="getAdv(${i}, ${advPageSize})">${
+        i + 1
+      }</a>
+      </li>`
+    );
+  }
+
+  // Next Button
+  const nextDisabled = advCurrentPage === totalPages - 1 ? "disabled" : "";
+  pagination.append(
+    `<li class="page-item ${nextDisabled}">
+      <a class="page-link" href="#" onclick="getAdv(${
+        advCurrentPage + 1
+      }, ${advPageSize})">Next</a>
+    </li>`
+  );
 }
 
 function addAdv() {
@@ -971,7 +1025,7 @@ function appendAdvs(a) {
   Name = a.name ? a.name : "NA";
   var isForTestUser = a.testUserAdv ? "Yes" : "No";
   var img = a.linkUrl
-    ? "<img style='width:70px; height:40px; object-fit: cover; border: 1px solid #ccc; cursor: pointer;' src='" +
+    ? "<img style='width:70px; height:60px; object-fit: cover; border: 1px solid #ccc; cursor: pointer;' src='" +
       a.linkUrl +
       "' onclick='openAdvImageModal(\"" +
       a.linkUrl +
@@ -1139,9 +1193,7 @@ function showTaskImageModal(imageUrl) {
 
 function appendReferals(t) {
   // Fallback to "Unknown" if firstname is empty
-  let firstname = t.userResponse.firstname
-    ? t.userResponse.firstname
-    : "Unknown";
+  let firstname = t.userResponse.firstname ? t.userResponse.firstname : "NA";
   let email = t.userResponse.email ? t.userResponse.email : "NA";
   let referralCount = t.referralCount ? t.referralCount : 0;
 
