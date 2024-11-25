@@ -28,6 +28,11 @@
   border: 1px solid #dee2e6;
 }
 
+#taskDescriptionModal .modal-body {
+    max-height: 400px; /* Set maximum height for the modal body */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
 </style>
 
 <!-- <section class="content-header">
@@ -170,7 +175,9 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body" id="taskDescriptionModalBody"></div>
+      <div class="modal-body" id="taskDescriptionModalBody">
+        
+      </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">
           Close
