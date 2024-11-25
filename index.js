@@ -443,7 +443,6 @@ function getTasks(page = 1, size = 5) {
 
       // Generate pagination
       if (data.totalPages) {
-        console.log("----1", data.totalPages);
         generateTaskPagination(data.totalPages);
       }
     })
@@ -523,7 +522,6 @@ function getReferal(page = 0, size = 5) {
 }
 
 function generatePagination(totalPages) {
-  console.log(totalPages);
   const pagination = $("#pagination");
   pagination.empty();
 
@@ -556,7 +554,6 @@ function generatePagination(totalPages) {
 
   // Next Button
   const nextDisabled = CurrentPage === totalPages - 1 ? "disabled" : "";
-  console.log(CurrentPage, totalPages);
   pagination.append(
     `<li class="page-item ${nextDisabled}">
       <a class="page-link" href="#" onclick="getReferal(${
