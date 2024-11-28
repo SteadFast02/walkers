@@ -420,10 +420,10 @@ function loadLeaderboardPage(p) {
 }
 
 let taskCurrentPage = 1;
-let taskPageSize = 5; // Default page size
+let taskPageSize = 5;
 
 function getTasks(page = 1, size = 5) {
-  taskCurrentPage = page; // Track current page
+  taskCurrentPage = page;
 
   fetch(
     `https://javaapi.abhiwandemos.com/api/v1/admin/tasks/pagination?page=${page}&size=${size}`,
@@ -437,14 +437,12 @@ function getTasks(page = 1, size = 5) {
     .then((data) => {
       $("#taskContent").empty();
 
-      // Populate tasks
       if (data && Array.isArray(data.content)) {
         data.content.forEach((task) => {
           appendTasks(task);
         });
       }
 
-      // Generate pagination
       if (data.totalPages) {
         generateTaskPagination(data.totalPages);
       }
@@ -460,7 +458,6 @@ function generateTaskPagination(totalPages) {
     return;
   }
 
-  // Previous Button
   const prevDisabled = taskCurrentPage === 1 ? "disabled" : "";
   pagination.append(
     `<li class="page-item ${prevDisabled}">
@@ -470,7 +467,6 @@ function generateTaskPagination(totalPages) {
     </li>`
   );
 
-  // Page Numbers
   for (let i = 1; i < totalPages; i++) {
     const activeClass = i === taskCurrentPage ? "active" : "";
     pagination.append(
@@ -480,7 +476,6 @@ function generateTaskPagination(totalPages) {
     );
   }
 
-  // Next Button
   const nextDisabled = taskCurrentPage === totalPages - 1 ? "disabled" : "";
   pagination.append(
     `<li class="page-item ${nextDisabled}">
@@ -492,10 +487,10 @@ function generateTaskPagination(totalPages) {
 }
 
 let CurrentPage = 0;
-let PageSize = 5; // Default page size
+let PageSize = 5;
 
 function getReferal(page = 0, size = 5) {
-  CurrentPage = page; // Track current page
+  CurrentPage = page;
 
   fetch(
     `https://javaapi.abhiwandemos.com/api/v1/admin/referal-list/pagination?page=${page}&size=${size}`,
@@ -509,14 +504,12 @@ function getReferal(page = 0, size = 5) {
     .then((data) => {
       $("#referalContent").empty();
 
-      // Populate referals
       if (data && Array.isArray(data.content)) {
         data.content.forEach((task) => {
           appendReferals(task);
         });
       }
 
-      // Generate pagination
       if (data.totalPages) {
         generatePagination(data.totalPages);
       }
@@ -529,10 +522,9 @@ function generatePagination(totalPages) {
   pagination.empty();
 
   if (totalPages < 1) {
-    return; // No pagination needed if less than two pages
+    return;
   }
 
-  // Previous Button
   const prevDisabled = CurrentPage === 0 ? "disabled" : "";
   pagination.append(
     `<li class="page-item ${prevDisabled}">
@@ -542,9 +534,7 @@ function generatePagination(totalPages) {
     </li>`
   );
 
-  // Page Numbers
   for (let i = 0; i < totalPages; i++) {
-    // Include the last page (i <= totalPages)
     const activeClass = i === CurrentPage ? "active" : "";
     pagination.append(
       `<li class="page-item ${activeClass}">
@@ -555,7 +545,6 @@ function generatePagination(totalPages) {
     );
   }
 
-  // Next Button
   const nextDisabled = CurrentPage === totalPages - 1 ? "disabled" : "";
   pagination.append(
     `<li class="page-item ${nextDisabled}">
@@ -588,10 +577,10 @@ function getReferralAmount() {
 }
 
 let advCurrentPage = 0;
-let advPageSize = 5; // Default page size
+let advPageSize = 5;
 
 function getAdv(page = 0, size = 5) {
-  advCurrentPage = page; // Update current page
+  advCurrentPage = page;
   fetch(
     `https://javaapi.abhiwandemos.com/api/v1/ads/list/paginated?page=${page}&size=${size}`,
     {
@@ -604,14 +593,12 @@ function getAdv(page = 0, size = 5) {
     .then((data) => {
       $("#advContent").empty();
 
-      // Populate advertisements
       if (data && Array.isArray(data.content)) {
         data.content.forEach((adv) => {
           appendAdvs(adv);
         });
       }
 
-      // Generate pagination
       if (data.totalPages) {
         generateAdvPagination(data.totalPages);
       }
@@ -624,10 +611,9 @@ function generateAdvPagination(totalPages) {
   pagination.empty();
 
   if (totalPages < 1) {
-    return; // No pagination needed if there’s only one page
+    return;
   }
 
-  // Previous Button
   const prevDisabled = advCurrentPage === 0 ? "disabled" : "";
   pagination.append(
     `<li class="page-item ${prevDisabled}">
@@ -637,7 +623,6 @@ function generateAdvPagination(totalPages) {
     </li>`
   );
 
-  // Page Numbers
   for (let i = 0; i < totalPages; i++) {
     const activeClass = i === advCurrentPage ? "active" : "";
     pagination.append(
@@ -649,7 +634,6 @@ function generateAdvPagination(totalPages) {
     );
   }
 
-  // Next Button
   const nextDisabled = advCurrentPage === totalPages - 1 ? "disabled" : "";
   pagination.append(
     `<li class="page-item ${nextDisabled}">
@@ -733,11 +717,23 @@ function addAdv() {
 
 function addTask() {
   const taskName = $("#taskName").val().trim();
+  const taskDescription = $("#taskDescription").val();
   if (taskName === "") {
     alert("Please enter a name for the task.");
     return;
   }
-
+  if (taskName.length > 50) {
+    alert(
+      "Task name exceeds the maximum limit of 50 characters. Please shorten the name."
+    );
+    return;
+  }
+  if (taskDescription.length > 500) {
+    alert(
+      "Task description exceeds the maximum limit of 500 characters. Please refine the description."
+    );
+    return;
+  }
   const reward = $("#taskReward").val().trim();
   if (reward < 0) {
     alert("Please enter a valid positive integer for the reward (XP).");
@@ -774,7 +770,7 @@ function addTask() {
   const data = {
     image: TASK_IMAGE,
     name: taskName,
-    description: $("#taskDescription").val(),
+    description: taskDescription,
     reward: reward,
     startDate: dateFromObj.getTime(),
     endDate: dateToObj.getTime(),
@@ -787,7 +783,10 @@ function addTask() {
     alert("Please Provide Image");
     return;
   }
-
+  if (!twitterPostLink) {
+    alert("Please Provide Twitter Post Link");
+    return;
+  }
   // fetch(REQUEST.ip + "/api/v1/admin/tasks", {
   fetch("https://javaapi.abhiwandemos.com/api/v1/admin/tasks", {
     method: "POST",
@@ -833,6 +832,7 @@ function handleTwitterUserSelection() {
       inputBox.className = "form-control mt-2";
       inputBox.id = "twitterUsername";
       inputBox.value = "";
+      inputBox.required = true;
       inputBox.placeholder = "Enter Twitter Postlink";
       inputContainer.appendChild(inputBox);
     }
@@ -1074,8 +1074,8 @@ function appendAdvs(a) {
 }
 
 function openAdvImageModal(imageUrl) {
-  $("#advModalImage").attr("src", imageUrl); // Set the image URL in the modal
-  $("#advImageModal").modal("show"); // Show the modal
+  $("#advModalImage").attr("src", imageUrl);
+  $("#advImageModal").modal("show");
 }
 
 function toggleButtonState(a) {
@@ -1108,7 +1108,6 @@ function appendTasks(t) {
   var isForTwitterUser = t.twitterTask ? "Yes" : "No";
   var twitterPostLink = t.twitterPostLink || "NA";
 
-  // Truncate description if more than 5 words
   var fullDescription = t.description;
   var truncatedDescription = t.description.split(" ").slice(0, 5).join(" ");
   if (t.description.split(" ").length > 5) {
@@ -1847,7 +1846,6 @@ function leaderBoardToggleSlider() {
     .then((data) => {
       loadTaskTypes();
       updateLeaderboard();
-      // Manually set the dropdown value to keep it sticky after update
       const dropdown = document.getElementById("taskType");
       dropdown.value = taskType;
     })
