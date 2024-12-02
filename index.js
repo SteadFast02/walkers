@@ -581,6 +581,7 @@ let advCurrentPage = 0;
 let advPageSize = 5;
 
 function getAdv(page = 0, size = 5) {
+  console.log("===========", page, size);
   advCurrentPage = page;
   fetch(
     `https://javaapi.abhiwandemos.com/api/v1/ads/list/paginated?page=${page}&size=${size}`,
@@ -717,7 +718,8 @@ function addAdv() {
       $("#advName").val("");
       $("#advImageUpload").val("");
       $("#linkUrl").val("");
-      getAdv(data);
+      console.log("data");
+      getAdv();
     })
     .catch((error) => console.error(error));
 }
