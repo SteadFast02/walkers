@@ -654,7 +654,12 @@ function addAdv() {
     alert("Please enter a name for the advertisement.");
     return;
   }
-
+  const linkPattern =
+    /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-]*)*(\?[^\s]*)?(#\S*)?$/;
+  if (!linkPattern.test(Adv_link)) {
+    alert("Please enter a valid link (URL).");
+    return;
+  }
   const dateStringFrom = fromTo[0].trim();
   const [dateFrom, timeFrom] = dateStringFrom.split(" ");
   const [dayFrom, monthFrom, yearFrom] = dateFrom.split("/");
@@ -977,8 +982,8 @@ function openModalViewAdv(advData) {
 }
 
 function updateAdv(advId) {
-  let fromTo = $("#reservationtimeupdate").val().split("-");
-  const ADV_LINK = $("advUpdateLink").val().split("");
+  // Parse the date and time range
+  let fromTo = $("#reservationtimeupdate").val().split(" - ");
   const dateStringFrom = fromTo[0].trim();
   const [dateFrom, timeFrom] = dateStringFrom.split(" ");
   const [dayFrom, monthFrom, yearFrom] = dateFrom.split("/");
@@ -996,15 +1001,20 @@ function updateAdv(advId) {
   const [dayTo, monthTo, yearTo] = dateTo.split("/");
   const [hourTo, minuteTo] = timeTo.split(":");
   const dateToObj = new Date(yearTo, monthTo - 1, dayTo, hourTo, minuteTo);
+
+  // Collect data for the update request
   const data = {
-    image: ADV_IMAGE,
-    linkUrl: ADV_LINK,
+    image: $("#advUpdatedImageUpload")[0].files[0]
+      ? URL.createObjectURL($("#advUpdatedImageUpload")[0].files[0])
+      : null,
+    linkUrl: $("#advUpdateLink").val(),
     name: $("#advUpdateName").val(),
-    startDate: dateFromObj.getTime(),
-    endDate: dateToObj.getTime(),
+    startTime: dateFromObj.toISOString(),
+    endTime: dateToObj.toISOString(),
     testUserAdv: $("#forTestUserSlct :selected").val() === "yes",
   };
 
+  // Make the API request to update advertisement
   fetch("https://javaapi.abhiwandemos.com/api/v1/ads/" + advId, {
     method: "PUT",
     headers: {
@@ -1013,9 +1023,16 @@ function updateAdv(advId) {
     },
     body: JSON.stringify(data),
   })
-    .then((response) => response.json())
-    .then((data) => {
-      getAdv(data);
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to update advertisement");
+      }
+      return response.json();
+    })
+    .then((updatedData) => {
+      console.log("Advertisement updated successfully:", updatedData);
+      // Refresh the advertisement list or UI (Implement getAdv if needed)
+      getAdv();
     })
     .catch((error) => console.error("Error updating advertisement:", error));
 }
