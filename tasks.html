@@ -90,69 +90,66 @@
 
       <!-- Form Section -->
       <div class="col-12 col-md-4">
-        <h4 class="mt10">Create New Task</h4>
-        <div class="card card-primary">
-          <form>
+    <h4 class="mt10">Create New Task</h4>
+    <div class="card card-primary">
+        <form>
             <div class="card-body">
-              <div class="form-group">
-                <label for="taskName">Name</label>
-                <input type="text" class="form-control" id="taskName" name="taskName" placeholder="Enter Task Name"/>
-              </div>
-              <div class="form-group">
-                <label for="taskDescription">Description</label>
-                <input type="text" class="form-control" id="taskDescription" placeholder="Description..." />
-              </div>
-              <div class="form-group">
-                <label for="taskReward">Reward(XP)</label>
-                <input type="number" class="form-control" id="taskReward" placeholder="Reward me"/>
-              </div>
-              <div class="form-group">
-                <label>For Test User</label>
-                <select class="form-control" id="forTestUserSlct">
-                  <option value="no">No</option>
-                  <option value="yes">Yes</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>For Twitter User</label>
-                <select
-                  class="form-control"
-                  id="forTwitterUserSlct"
-                  onchange="handleTwitterUserSelection()"
-                >
-                  <option value="no">No</option>
-                  <option value="yes">Yes</option>
-                </select>
-              </div>
-              <div class="form-group" id="twitterUserInputContainer"></div>
-              <div class="form-group">
-                <label>Image</label>
-                <input type="file" id="taskImageUpload" accept="image/*" />
-              </div>
-              <div class="form-group">
-                <label>Date and time range</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"
-                      ><i class="far fa-clock"></i
-                    ></span>
-                  </div>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="reservationtime"
-                  />
+                <!-- Task Name Dropdown -->
+                <div class="form-group">
+                    <label for="taskName">Name</label>
+                    <select class="form-control" id="taskName" name="taskName">
+                        <option value="">Select Task Name</option>
+                    </select>
+                    <input type="text" class="form-control mt-2" id="newTaskName" style="display:none;" placeholder="Enter New Task Name" />
                 </div>
-              </div>
+                <!-- Other form fields as before... -->
+                <div class="form-group">
+                    <label for="taskDescription">Description</label>
+                    <input type="text" class="form-control" id="taskDescription" placeholder="Description..." />
+                </div>
+                <div class="form-group">
+                    <label for="taskReward">Reward(XP)</label>
+                    <input type="number" class="form-control" id="taskReward" placeholder="Reward me"/>
+                </div>
+                <div class="form-group">
+                    <label>For Test User</label>
+                    <select class="form-control" id="forTestUserSlct">
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>For Twitter User</label>
+                    <select
+                        class="form-control"
+                        id="forTwitterUserSlct"
+                        onchange="handleTwitterUserSelection()"
+                    >
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                </div>
+                <div class="form-group" id="twitterUserInputContainer"></div>
+                <div class="form-group">
+                    <label>Image</label>
+                    <input type="file" id="taskImageUpload" accept="image/*" />
+                </div>
+                <div class="form-group">
+                    <label>Date and time range</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="far fa-clock"></i></span>
+                        </div>
+                        <input type="text" class="form-control" id="reservationtime" />
+                    </div>
+                </div>
             </div>
             <div class="card-footer">
-              <button type="button" onclick="addTask()" class="btn btn-primary">
-                Add
-              </button>
+                <button type="button" onclick="addTask()" class="btn btn-primary">Add</button>
             </div>
-          </form>
-        </div>
-      </div>
+        </form>
+    </div>
+</div>
     </div>
   </div>
 </section>

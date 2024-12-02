@@ -348,6 +348,7 @@ function loadTaskPage(p) {
     .empty()
     .load(p + ".html", function () {
       getTasks();
+      fetchTaskNames();
 
       $("#taskImageUpload").on("change", function (event) {
         uploadFile(event, "task");
@@ -648,6 +649,7 @@ function addAdv() {
   let fromTo = $("#advreservationtime").val();
   fromTo = fromTo.split("-");
   const advName = $("#advName").val().trim();
+  const Adv_link = $("#linkUrl").val().trim();
   if (advName === "") {
     alert("Please enter a name for the advertisement.");
     return;
@@ -672,8 +674,7 @@ function addAdv() {
   const dateToObj = new Date(yearTo, monthTo - 1, dayTo, hourTo, minuteTo);
   const data = {
     image: ADV_IMAGE,
-    linkUrl: ADV_IMAGE,
-
+    linkUrl: Adv_link,
     name: advName,
     startDate: dateFromObj.getTime(),
     endDate: dateToObj.getTime(),
@@ -682,7 +683,7 @@ function addAdv() {
   if ($("#forTestUserSlct :selected").val() == "yes") {
     data.testUserAdv = true;
   }
-  if (!data.linkUrl && !data.image) {
+  if (!data.image) {
     alert("Please Provide image");
     return;
   }
@@ -710,14 +711,81 @@ function addAdv() {
 
       $("#advName").val("");
       $("#advImageUpload").val("");
+      $("#linkUrl").val("");
       getAdv(data);
     })
     .catch((error) => console.error(error));
 }
 
+const fetchTaskNames = async () => {
+  try {
+    const taskNameDropdown = document.getElementById("taskName");
+
+    // Clear existing options
+    taskNameDropdown.innerHTML = '<option value="">Select Task Name</option>';
+
+    const response = await fetch(
+      "https://javaapi.abhiwandemos.com/api/v1/admin/tasks-list",
+      {
+        method: "GET",
+        headers: {
+          Authorization: localStorage.getItem("t"),
+        },
+      }
+    );
+    const data = await response.json();
+    const taskNames = data.map((task) => Object.keys(task)[0]);
+
+    taskNames.forEach((task) => {
+      const option = document.createElement("option");
+      option.value = task;
+      option.textContent = task;
+      taskNameDropdown.appendChild(option);
+    });
+
+    // Add "Add New Task" option
+    const addNewOption = document.createElement("option");
+    addNewOption.value = "addNew";
+    addNewOption.textContent = "Add New Task";
+    addNewOption.style.color = "green";
+    addNewOption.style.fontWeight = "bold";
+    taskNameDropdown.appendChild(addNewOption);
+
+    // Attach change event listener to dropdown
+    taskNameDropdown.addEventListener("change", handleDropdownChange);
+  } catch (error) {
+    console.error("Error fetching task names:", error);
+  }
+};
+
+const handleDropdownChange = () => {
+  const taskNameDropdown = document.getElementById("taskName");
+  const newTaskInput = document.getElementById("newTaskName");
+
+  if (taskNameDropdown.value === "addNew") {
+    newTaskInput.style.display = "block"; // Show input for new task name
+  } else {
+    newTaskInput.style.display = "none"; // Hide input if not adding new task
+    newTaskInput.value = ""; // Clear any previously entered value
+  }
+};
+
 function addTask() {
+  const taskNameDropdown = document.getElementById("taskName");
+  const newTaskInput = document.getElementById("newTaskName");
   const taskName = $("#taskName").val().trim();
   const taskDescription = $("#taskDescription").val();
+  const selectedTaskName = taskNameDropdown.value;
+  const taskNameToUse =
+    selectedTaskName === "addNew"
+      ? newTaskInput.value.trim()
+      : selectedTaskName;
+
+  // Validation
+  if (!taskNameToUse) {
+    alert("Please enter a valid task name.");
+    return;
+  }
   if (taskName === "") {
     alert("Please enter a name for the task.");
     return;
@@ -769,7 +837,7 @@ function addTask() {
 
   const data = {
     image: TASK_IMAGE,
-    name: taskName,
+    name: taskNameToUse,
     description: taskDescription,
     reward: reward,
     startDate: dateFromObj.getTime(),
@@ -810,12 +878,18 @@ function addTask() {
       $("#reservationtime").val(`${currentDateTime} - ${currentDateTime}`);
 
       $("#taskName").val("");
+      $("#newTaskName").val("");
       $("#taskImageUpload").val("");
       $("#taskDescription").val("");
       $("#taskReward").val("");
       $("#forTestUserSlct").val("");
-      $("#forTwitterUserSlct").val("");
+      $("#forTwitterUserSlct").val("no");
+      $("#forTestUserSlct").val("no");
       $("#twitterUsername").val("");
+      taskNameDropdown.value = "";
+      newTaskInput.style.display = "none"; // Hide the new task input field
+      newTaskInput.value = ""; // Clear the new task input field
+      fetchTaskNames();
       getTasks();
     })
     .catch((error) => console.error(error));
@@ -881,26 +955,30 @@ function openModalRemoveAdv(id, txt) {
 }
 
 function openModalViewAdv(advData) {
+  console.log(advData);
   $("#advUpdateName").val(advData.name);
+  $("#advUpdateLink").val(advData.linkUrl);
   $("#reservationtimeupdate").val(
     moment(advData.startTime).format("DD/MM/YYYY HH:mm") +
       " - " +
       moment(advData.endTime).format("DD/MM/YYYY HH:mm")
   );
-  if (advData.linkUrl) {
-    $("#advImagePreview").attr("src", advData.linkUrl).show();
+  if (advData.image) {
+    $("#advImagePreview").attr("src", advData.image).show();
   } else {
     $("#advImagePreview").hide();
   }
   $("#modal-default-Updateadv").modal("show");
-  $("#updateAdvButton").on("click", function () {
-    updateAdv(advData.id);
-  });
+  $("#updateAdvButton")
+    .off("click")
+    .on("click", function () {
+      updateAdv(advData.id);
+    });
 }
 
 function updateAdv(advId) {
   let fromTo = $("#reservationtimeupdate").val().split("-");
-
+  const ADV_LINK = $("advUpdateLink").val().split("");
   const dateStringFrom = fromTo[0].trim();
   const [dateFrom, timeFrom] = dateStringFrom.split(" ");
   const [dayFrom, monthFrom, yearFrom] = dateFrom.split("/");
@@ -920,7 +998,7 @@ function updateAdv(advId) {
   const dateToObj = new Date(yearTo, monthTo - 1, dayTo, hourTo, minuteTo);
   const data = {
     image: ADV_IMAGE,
-    linkUrl: ADV_IMAGE,
+    linkUrl: ADV_LINK,
     name: $("#advUpdateName").val(),
     startDate: dateFromObj.getTime(),
     endDate: dateToObj.getTime(),
@@ -955,6 +1033,7 @@ function removeTask() {
   )
     .then(() => {
       $("#modal-default-tasks").modal("hide");
+      fetchTaskNames();
       getTasks();
     })
     .catch((error) => {
@@ -1027,11 +1106,11 @@ function removeAlert() {
 function appendAdvs(a) {
   Name = a.name ? a.name : "NA";
   var isForTestUser = a.testUserAdv ? "Yes" : "No";
-  var img = a.linkUrl
+  var img = a.image
     ? "<img style='width:70px; height:60px; object-fit: cover; border: 1px solid #ccc; cursor: pointer;' src='" +
-      a.linkUrl +
+      a.image +
       "' onclick='openAdvImageModal(\"" +
-      a.linkUrl +
+      a.image +
       "\")'/>"
     : "";
 
@@ -1040,6 +1119,9 @@ function appendAdvs(a) {
     ? "background-color: red; color: white;"
     : "background-color: green; color: white;";
 
+  var linkurl = a.linkUrl
+    ? "<a href='" + a.linkUrl + "' target='_blank''>" + a.linkUrl + "</a>"
+    : "NA";
   $("#advContent").append(
     "<tr><td style='vertical-align: middle;'>" +
       Name +
@@ -1047,6 +1129,8 @@ function appendAdvs(a) {
       moment(a.startTime).format("DD/MM/YYYY HH:mm") +
       "</td><td style='vertical-align: middle;'>" +
       moment(a.endTime).format("DD/MM/YYYY HH:mm") +
+      "</td><td style='vertical-align: middle;'>" +
+      linkurl +
       "</td><td style='text-align: center;'>" +
       img +
       "</td><td style='text-align:center'>" +
